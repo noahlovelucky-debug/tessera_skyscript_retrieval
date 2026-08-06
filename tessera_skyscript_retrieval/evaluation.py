@@ -36,7 +36,7 @@ def _semantic_block(text, highres, tessera, labels, k_values):
 
 
 def evaluate(config: dict, limit: int | None = None, checkpoint_path: str | None = None) -> dict:
-    if config.get("model", {}).get("architecture") in {"latent_v2", "gated_coarse_v3"}:
+    if config.get("model", {}).get("architecture") in {"latent_v2", "gated_coarse_v3", "anchored_gated_v4"}:
         from .latent_evaluation import evaluate_latent
 
         return evaluate_latent(config, limit, checkpoint_path)

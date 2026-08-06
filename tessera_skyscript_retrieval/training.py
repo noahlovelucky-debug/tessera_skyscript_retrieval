@@ -118,7 +118,7 @@ def train_adapter(config: dict, limit: int | None = None) -> Path:
         from .tessera_box import train_tessera_box
 
         return train_tessera_box(config, limit)
-    if config.get("model", {}).get("architecture") in {"latent_v2", "gated_coarse_v3"}:
+    if config.get("model", {}).get("architecture") in {"latent_v2", "gated_coarse_v3", "anchored_gated_v4"}:
         from .latent_training import train_latent_model
 
         return train_latent_model(config, limit)

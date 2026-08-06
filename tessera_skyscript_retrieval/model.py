@@ -139,6 +139,9 @@ class HighResLatentAdapter(nn.Module):
         heads: int,
         feedforward_dim: int,
         gate_hidden_dim: int,
+        gate_mode: str,
+        gate_base_weight: float,
+        gate_max_delta: float,
         dropout: float,
     ) -> None:
         super().__init__()
@@ -166,6 +169,15 @@ class HighResLatentAdapter(nn.Module):
             nn.Dropout(dropout),
             nn.Linear(gate_hidden_dim, 1),
         )
+        if gate_mode not in {"sigmoid", "anchored_tanh"}:
+            raise ValueError(f"unsupported gate mode: {gate_mode}")
+        if not 0.0 <= gate_base_weight <= 1.0:
+            raise ValueError("gate_base_weight must be in [0, 1]")
+        if gate_max_delta < 0.0 or gate_base_weight - gate_max_delta < 0.0 or gate_base_weight + gate_max_delta > 1.0:
+            raise ValueError("gate_base_weight +/- gate_max_delta must remain in [0, 1]")
+        self.gate_mode = gate_mode
+        self.gate_base_weight = gate_base_weight
+        self.gate_max_delta = gate_max_delta
         self.global_projection = nn.Sequential(
             nn.LayerNorm(latent_dim),
             nn.Linear(latent_dim, feedforward_dim),
@@ -198,7 +210,18 @@ class HighResLatentAdapter(nn.Module):
 
     def encode_gate(self, text_global: torch.Tensor) -> torch.Tensor:
         """Return the text-conditioned global-score weight in [0, 1]."""
-        return torch.sigmoid(self.gate_projection(text_global.float()).squeeze(-1))
+        logits = self.gate_projection(text_global.float()).squeeze(-1)
+        if self.gate_mode == "anchored_tanh":
+            return self.gate_base_weight + self.gate_max_delta * torch.tanh(logits)
+        return torch.sigmoid(logits)
+
+    def initialize_anchor_gate(self) -> None:
+        """Make the anchored model start at the proven fixed global/local blend."""
+        if self.gate_mode != "anchored_tanh":
+            return
+        final = self.gate_projection[-1]
+        nn.init.zeros_(final.weight)
+        nn.init.zeros_(final.bias)
 
 
 class LatentRetrievalModel(nn.Module):
@@ -226,6 +249,9 @@ class LatentRetrievalModel(nn.Module):
             heads=int(model_cfg["highres_heads"]),
             feedforward_dim=int(model_cfg["highres_feedforward_dim"]),
             gate_hidden_dim=int(model_cfg.get("gate_hidden_dim", model_cfg["hidden_dim"])),
+            gate_mode=str(model_cfg.get("gate_mode", "sigmoid")),
+            gate_base_weight=float(model_cfg.get("gate_base_weight", 0.5)),
+            gate_max_delta=float(model_cfg.get("gate_max_delta", 0.5)),
             dropout=float(model_cfg["dropout"]),
         )
         temperature = float(model_cfg["temperature"])

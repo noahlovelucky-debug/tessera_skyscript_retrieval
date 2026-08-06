@@ -1,0 +1,101 @@
+protocol,seed,source_title,test_examples,query,frequency_stratum
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Abandoned railway.,83,Abandoned railway,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Alley classified as service road.,186,Alley classified as service road,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Baseball pitch for leisure and sports activities.,143,Baseball pitch for leisure and sports activities,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Cemetery.,355,Cemetery,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Commercial building.,391,Commercial building,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Farm auxiliary building.,85,Farm auxiliary building,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Farm building.,152,Farm building,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Golf cartpath that is also road path.,73,Golf cartpath that is also road path,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Greenhouse.,103,Greenhouse,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Healthcare facility identified as hospital.,51,Healthcare facility identified as hospital,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Hospital building.,115,Hospital building,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Islet.,116,Islet,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Marked road crossing.,112,Marked road crossing,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Parking space.,339,Parking space,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Path designated for golf carts.,80,Path designated for golf carts,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Playground area for leisure activities on the land.,60,Playground area for leisure activities on the land,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Playground area for leisure land.,66,Playground area for leisure land,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Power pole.,213,Power pole,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Pylon for aerialway.,94,Pylon for aerialway,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Residential road.,136,Residential road,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Road serving as parking aisle.,53,Road serving as parking aisle,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Road with traffic signals.,73,Road with traffic signals,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Rough area on grassy golf course.,61,Rough area on grassy golf course,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Secondary road with asphalt surface.,99,Secondary road with asphalt surface,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Silo.,110,Silo,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Soccer pitch designated for leisure and sports activities.,40,Soccer pitch designated for leisure and sports activities,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Soccer pitch for leisureland activities.,42,Soccer pitch for leisureland activities,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Storage tank with man-made structure.,84,Storage tank with man-made structure,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Supermarket.,60,Supermarket,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: University building.,46,University building,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: View of taxiway at the airport.,190,View of taxiway at the airport,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Warehouse.,82,Warehouse,1
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Zebra crossing on the road.,140,Zebra crossing on the road,1
+test-title-frequency-stratified-v1,20260807,"An aerial image. It shows: Asphalt road classified as primary highway, featuring roundabout at junction.",21,"Asphalt road classified as primary highway, featuring roundabout at junction",2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Building with storage tank.,19,Building with storage tank,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Building with tile roof.,23,Building with tile roof,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Building with tiled roof.,28,Building with tiled roof,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Bunker on golf course.,19,Bunker on golf course,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Bus stop equipped with public transport stop position.,21,Bus stop equipped with public transport stop position,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Catenary mast for power lines.,30,Catenary mast for power lines,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Crossing with traffic signals.,23,Crossing with traffic signals,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Cycleway.,20,Cycleway,2
+test-title-frequency-stratified-v1,20260807,"An aerial image. It shows: Designated area for dogs to play, dog park.",26,"Designated area for dogs to play, dog park",2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Detached building with gabled roof.,36,Detached building with gabled roof,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Golf tee on grassy land.,20,Golf tee on grassy land,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Grass area designated as golf tee.,20,Grass area designated as golf tee,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Lock gate along waterway.,20,Lock gate along waterway,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Marsh wetland.,25,Marsh wetland,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Miniature golf leisure land.,21,Miniature golf leisure land,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Mixed leaf woodland.,38,Mixed leaf woodland,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Poultry house.,29,Poultry house,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Public building.,21,Public building,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Residential area consisting of single-family homes.,24,Residential area consisting of single-family homes,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Residential road with asphalt surface.,35,Residential road with asphalt surface,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Rest area on the road.,28,Rest area on the road,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Road crossing with traffic signals.,20,Road crossing with traffic signals,2
+test-title-frequency-stratified-v1,20260807,"An aerial image. It shows: Roller coaster, exhilarating and thrilling attraction.",20,"Roller coaster, exhilarating and thrilling attraction",2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Secondary road around roundabout.,22,Secondary road around roundabout,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Solar power generator using photovoltaic panels.,21,Solar power generator using photovoltaic panels,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Storage tank created as man-made structure.,26,Storage tank created as man-made structure,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Trunk link highway with asphalt surface.,31,Trunk link highway with asphalt surface,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Unmarked crossing on footway.,22,Unmarked crossing on footway,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: View of motorway.,30,View of motorway,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: View of wastewater plant.,26,View of wastewater plant,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Wind generator using wind turbines of horizontal axis.,23,Wind generator using wind turbines of horizontal axis,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Woodland with needle-leaved trees.,26,Woodland with needle-leaved trees,2
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Beautiful meadow.,15,Beautiful meadow,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Bridge with electrified railway tracks featuring contact line.,13,Bridge with electrified railway tracks featuring contact line,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Clinic building offering healthcare services.,13,Clinic building offering healthcare services,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Concrete bench.,13,Concrete bench,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Ditch in the surroundings.,15,Ditch in the surroundings,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Driving range for golf on grass.,12,Driving range for golf on grass,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Expressway with asphalt surface classified as trunk highway.,18,Expressway with asphalt surface classified as trunk highway,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Fenced power substation at the transmission level.,12,Fenced power substation at the transmission level,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Government office.,13,Government office,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Grassy area designated as driving range for golf.,18,Grassy area designated as driving range for golf,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Grassy area used as driving range for golf.,14,Grassy area used as driving range for golf,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Grassy golf fairway.,15,Grassy golf fairway,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Historic wayside cross.,14,Historic wayside cross,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Hut.,13,Hut,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Image of wastewater.,14,Image of wastewater,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Junction on the railway.,15,Junction on the railway,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Marked crossing with zebra markings on the road.,15,Marked crossing with zebra markings on the road,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Miniature golf course.,14,Miniature golf course,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Narrow-gauge railway track with 1 electrified contact line.,13,Narrow-gauge railway track with 1 electrified contact line,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Path with excellent trail visibility.,18,Path with excellent trail visibility,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Paved residential road.,12,Paved residential road,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Railway line on embankment.,12,Railway line on embankment,3
+test-title-frequency-stratified-v1,20260807,"An aerial image. It shows: Residential road with asphalt surface, without sidewalks.",14,"Residential road with asphalt surface, without sidewalks",3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Retail building housing supermarket.,17,Retail building housing supermarket,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Scrap yard located in industrial area.,14,Scrap yard located in industrial area,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Secondary road leading to roundabout.,13,Secondary road leading to roundabout,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Secondary road with frontage road alongside.,17,Secondary road with frontage road alongside,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Secondary road with separate sidewalks.,15,Secondary road with separate sidewalks,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Storage rental shop located in building.,12,Storage rental shop located in building,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Unclassified road with bridge.,16,Unclassified road with bridge,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Uncontrolled crossing with central island on the road.,16,Uncontrolled crossing with central island on the road,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Wastewater plant.,16,Wastewater plant,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Wind generator powered by horizontal-axis wind turbine.,13,Wind generator powered by horizontal-axis wind turbine,3
+test-title-frequency-stratified-v1,20260807,An aerial image. It shows: Wind power generator with wind turbines.,15,Wind power generator with wind turbines,3

@@ -119,6 +119,38 @@ def test_latent_v2_shapes_normalization_and_gradients():
     )
 
 
+def test_anchored_gate_starts_at_fixed_blend_and_remains_bounded():
+    config = {
+        "tessera": {"descriptor_dim": 32, "embedding_dim": 8},
+        "model": {
+            "common_dim": 16,
+            "hidden_dim": 24,
+            "latent_count": 2,
+            "latent_dim": 8,
+            "highres_layers": 1,
+            "highres_heads": 2,
+            "highres_feedforward_dim": 16,
+            "tessera_width": 16,
+            "tessera_layers": 1,
+            "tessera_heads": 2,
+            "tessera_feedforward_dim": 32,
+            "dropout": 0.0,
+            "temperature": 0.07,
+            "gate_mode": "anchored_tanh",
+            "gate_base_weight": 0.35,
+            "gate_max_delta": 0.20,
+        },
+    }
+    model = LatentRetrievalModel(config)
+    model.highres_adapter.initialize_anchor_gate()
+    gates = model.encode_text_gate(torch.randn(32, 16))
+    assert torch.allclose(gates, torch.full_like(gates, 0.35), atol=1e-6)
+    with torch.no_grad():
+        model.highres_adapter.gate_projection[-1].weight.fill_(10.0)
+    gates = model.encode_text_gate(torch.randn(32, 16))
+    assert torch.all((gates >= 0.15) & (gates <= 0.55))
+
+
 def test_prefiltered_late_interaction_matches_full_ranking_when_prefilter_is_all():
     rng = np.random.default_rng(11)
     text_latents = rng.normal(size=(3, 8)).astype(np.float32)

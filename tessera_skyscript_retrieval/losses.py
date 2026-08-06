@@ -109,16 +109,22 @@ def latent_alignment_losses(
         + _distill_distribution(tessera_logits.T, teacher_logits.T)
     )
     latent_diversity = _latent_diversity(highres_latents)
-    gate_balance = (text_gate.mean() - float(weights.get("gate_target_mean", 0.5))).square()
+    gate_base_weight = float(weights.get("gate_base_weight", weights.get("gate_target_mean", 0.5)))
+    gate_max_delta = float(weights.get("gate_max_delta", 0.5))
+    gate_balance = (text_gate.mean() - gate_base_weight).square()
     # The more discriminative branch for each text is a soft, detached routing
     # target. This prevents the gate from converging to a single fixed blend.
     route_temperature = float(weights.get("gate_route_temperature", 1.0))
     global_route_loss = _directional_multi_positive_per_query(highres_logits, positives)
     local_route_loss = _directional_multi_positive_per_query(fine_logits, positives)
-    route_target = torch.softmax(
+    route_probability = torch.softmax(
         torch.stack([-global_route_loss, -local_route_loss], dim=-1) / route_temperature,
         dim=-1,
     )[:, 0].detach()
+    # Anchored gates preserve a validated fixed blend unless branch evidence
+    # supports a bounded text-specific adjustment.
+    route_target = gate_base_weight + gate_max_delta * (2.0 * route_probability - 1.0)
+    route_target = route_target.clamp(0.0, 1.0)
     gate_route = F.mse_loss(text_gate, route_target)
     total = (
         float(weights["tessera_semantic_weight"]) * tessera_semantic

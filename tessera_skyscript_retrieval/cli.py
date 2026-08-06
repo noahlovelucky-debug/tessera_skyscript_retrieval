@@ -40,7 +40,7 @@ def main() -> None:
         from .training import train_adapter
         train_adapter(config, args.limit)
     elif args.command == "evaluate":
-        if config.get("model", {}).get("architecture") in {"latent_v2", "gated_coarse_v3"}:
+        if config.get("model", {}).get("architecture") in {"latent_v2", "gated_coarse_v3", "anchored_gated_v4"}:
             from .latent_evaluation import evaluate_latent
             evaluate_latent(config, args.limit, args.checkpoint)
         elif config.get("model", {}).get("architecture") == "tessera_box_mlp":

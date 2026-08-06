@@ -197,6 +197,13 @@ def train_latent_model(config: dict, limit: int | None = None) -> Path:
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = build_latent_model(config).to(device)
+    architecture = config["model"].get("architecture", "latent_v2")
+    warm_start = config["model"].get("warm_start_checkpoint")
+    if warm_start:
+        checkpoint = torch.load(warm_start, map_location="cpu", weights_only=False)
+        model.load_state_dict(checkpoint["model_state"], strict=True)
+        model.highres_adapter.initialize_anchor_gate()
+        print(f"warm-started {architecture} from {warm_start}")
     optimizer = torch.optim.AdamW(
         [
             {
@@ -231,7 +238,6 @@ def train_latent_model(config: dict, limit: int | None = None) -> Path:
     trainable_parameters = sum(
         parameter.numel() for parameter in model.parameters() if parameter.requires_grad
     )
-    architecture = config["model"].get("architecture", "latent_v2")
     print(f"{architecture} trainable parameters: {trainable_parameters:,}")
     for epoch in range(int(cfg["epochs"])):
         model.train()
