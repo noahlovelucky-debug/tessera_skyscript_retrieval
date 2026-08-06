@@ -58,6 +58,38 @@ SkyScript/TESSERA 对照使用固定的空间切分：训练 `397,178`、验证 
 - `artifacts/audits/luna_model_compare_v2/candidates_luna_judged.csv`
 - `artifacts/audits/luna_model_compare_v2/luna_raw_responses.json`
 
+## 扩展 Luna 12 类审核
+
+对当前视觉最优的无门控高分 `latent_v2`，固定 12 个开放词汇查询，每类审核闭集候选 Top-10 的实际高分图，共 120 张。绿色边框为 Luna 判定相关，红色边框为不相关。
+
+| 查询 | 正确 / 10 | 视觉 P@10 | 视觉 nDCG@10 |
+|---|---:|---:|---:|
+| river | 10 / 10 | 100% | 100.0% |
+| school | 10 / 10 | 100% | 100.0% |
+| farmland | 8 / 10 | 80% | 84.8% |
+| hospital | 10 / 10 | 100% | 100.0% |
+| airport | 9 / 10 | 90% | 89.0% |
+| bridge | 10 / 10 | 100% | 100.0% |
+| railway | 10 / 10 | 100% | 100.0% |
+| swimming pool | 10 / 10 | 100% | 100.0% |
+| golf course | 10 / 10 | 100% | 100.0% |
+| parking lot | 10 / 10 | 100% | 100.0% |
+| industrial building | 10 / 10 | 100% | 100.0% |
+| cemetery | 10 / 10 | 100% | 100.0% |
+| **平均** | **9.75 / 10** | **97.5%** | **97.8%** |
+
+这组扩展审核中较弱的是农田和机场。农田的第 6、7 名为住宅庭院草地而非耕地，说明模型仍会把相邻的绿色覆盖误认为农田。它不是完整类覆盖或人工金标准，不能单独作为商用结论。
+
+产物：
+
+- `artifacts/audits/luna_latent_v2_extended_v1/summary.json`
+- `artifacts/audits/luna_latent_v2_extended_v1/candidates_luna_judged.csv`
+- `artifacts/audits/luna_latent_v2_extended_v1/visualizations/`
+
+## 全部 Title 类
+
+数据集没有一个小型、互斥的预定义类别表。它以英文细粒度 title 作为训练标签，共 `25,220` 个 title；例如不同类型的桥、道路、球场、屋顶和建筑会被分成不同 title。完整清单及各切分样本数见 `artifacts/audits/result/title_inventory.csv`。
+
 ## TESSERA v4.2 MLP 与 Transformer
 
 这一组使用的是 `/data/code/tessera/tessera-vlm/patch_vit_retrieval` 的 Baidu POI 数据，而非上述 52 万 SkyScript 样本。候选、标签、S1/S2 token 均不同，不能与上表的 Luna 视觉 P@10 横向比较。它回答的是更窄的问题：在相同 v4.2 数据、损失、切分和文本塔下，以多层 Transformer 替换图像 MLP/attention-pool 能否改善检索。

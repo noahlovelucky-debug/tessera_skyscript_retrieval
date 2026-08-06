@@ -35,6 +35,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--baseline-config", default="configs/latent_v2.yaml")
     parser.add_argument("--box-config", default="configs/tessera_box_v1.yaml")
     parser.add_argument("--queries", nargs="+", default=["river", "school", "farmland"])
+    parser.add_argument(
+        "--systems",
+        nargs="+",
+        choices=(
+            "gated_highres",
+            "latent_v2_highres_fine",
+            "latent_v2_tessera",
+            "tessera_v1_box_mlp",
+        ),
+        default=(
+            "gated_highres",
+            "latent_v2_highres_fine",
+            "latent_v2_tessera",
+            "tessera_v1_box_mlp",
+        ),
+    )
     parser.add_argument("--split", default="test")
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--output-dir", default="artifacts/audits/luna_retrieval_v1")
@@ -277,12 +293,13 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     candidate_rows: list[dict] = []
     test_frame = frame.iloc[positions].reset_index(drop=True)
-    systems = (
+    available_systems = (
         ("gated_highres", top_indices, query_gates),
         ("latent_v2_highres_fine", baseline_highres_indices, np.full(len(args.queries), np.nan)),
         ("latent_v2_tessera", baseline_indices, np.full(len(args.queries), np.nan)),
         ("tessera_v1_box_mlp", box_indices, np.full(len(args.queries), np.nan)),
     )
+    systems = tuple(item for item in available_systems if item[0] in args.systems)
     for system, system_indices, system_gates in systems:
         for query, gate, indices in zip(args.queries, system_gates, system_indices):
             for rank, index in enumerate(indices, start=1):
