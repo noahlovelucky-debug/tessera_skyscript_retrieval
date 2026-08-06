@@ -1,0 +1,50 @@
+{
+  "checkpoint": "/data/code/tessera_skyscript_retrieval/artifacts/runs/tessera_box_v1/best.pt",
+  "architecture": "tessera_v1_box_mlp_768_1024_384",
+  "trainable_parameters": 3652367,
+  "input": {
+    "tessera_descriptor": 2816,
+    "bbox_features": 7,
+    "label_supervision": "title_id multi-positive InfoNCE"
+  },
+  "splits": {
+    "test": {
+      "text_to_tessera": {
+        "Hit@1": 0.02559971356963838,
+        "Precision@1": 0.02559971356963838,
+        "nDCG@1": 0.02559971356963838,
+        "Hit@5": 0.08127461510920157,
+        "Precision@5": 0.02080200501253133,
+        "nDCG@5": 0.03036349350321579,
+        "Hit@10": 0.1260293591120659,
+        "Precision@10": 0.018779090583601863,
+        "nDCG@10": 0.03592183899036549,
+        "Hit@100": 0.3250984604368063,
+        "Precision@100": 0.010119942713927677,
+        "nDCG@100": 0.06602609488305448,
+        "macro_mAP": 0.028215864507320446,
+        "query_count": 5586.0,
+        "candidate_count": 39344.0
+      }
+    },
+    "oov_test": {
+      "text_to_tessera": {
+        "Hit@1": 0.39473684210526316,
+        "Precision@1": 0.39473684210526316,
+        "nDCG@1": 0.39473684210526316,
+        "Hit@5": 0.6710526315789473,
+        "Precision@5": 0.3368421052631579,
+        "nDCG@5": 0.3606100663685464,
+        "Hit@10": 0.7763157894736842,
+        "Precision@10": 0.29342105263157897,
+        "nDCG@10": 0.3355788974504929,
+        "Hit@100": 0.9473684210526315,
+        "Precision@100": 0.13802631578947372,
+        "nDCG@100": 0.38986239587168187,
+        "macro_mAP": 0.24343223147466758,
+        "query_count": 76.0,
+        "candidate_count": 2793.0
+      }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+data:
+  source_manifest: /data/tessera_dataset/image-emb-text/manifest_520k.csv
+  image_root: /data/tessera_dataset/image-emb-text
+  chip_root: /data/tessera_dataset/image-emb-text/tessera_chips/npy
+  metadata_root: /data/tessera_v2_sentinel/tessera_v2
+  prepared_manifest: /data/code/tessera_skyscript_retrieval/artifacts/prepared_manifest.parquet
+  allowed_sources: [CH, US, FI, ES]
+  split_seed: 42
+  train_percent: 80
+  val_percent: 10
+  oov_min_samples: 100
+  oov_percent: 10
+
+skyclip:
+  repository: /data/code/tessera_skyscript_retrieval/third_party/SkyScript
+  checkpoint_zip: /data/code/tessera_skyscript_retrieval/checkpoints/SkyCLIP_ViT_L14_top30pct_filtered_by_CLIP_laion_RS.zip
+  checkpoint: /data/code/tessera_skyscript_retrieval/checkpoints/SkyCLIP_ViT_L14_top30pct_filtered_by_CLIP_laion_RS/epoch_20.pt
+  model: ViT-L-14
+  embedding_dim: 768
+  image_batch_size: 128
+  workers: 8
+  cache_dir: /data/code/tessera_skyscript_retrieval/artifacts/cache/skyclip
+
+tessera:
+  embedding_dim: 128
+  pyramid_levels: [1, 2, 4]
+  include_std: true
+  descriptor_dim: 2816
+  cache_dir: /data/code/tessera_skyscript_retrieval/artifacts/cache/tessera
+  workers: 16
+
+model:
+  hidden_dim: 2048
+  common_dim: 768
+  dropout: 0.1
+  temperature: 0.07
+
+training:
+  output_dir: /data/code/tessera_skyscript_retrieval/artifacts/runs/default
+  epochs: 20
+  batch_size: 256
+  titles_per_batch: 64
+  samples_per_title: 4
+  learning_rate: 0.0001
+  temperature_learning_rate: 0.0005
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  max_grad_norm: 1.0
+  mixed_precision: true
+  early_stopping_patience: 5
+  max_validation_candidates: 20000
+  workers: 4
+  seed: 42
+  semantic_weight: 1.0
+  pair_distill_weight: 0.5
+  relation_distill_weight: 0.25
+
+evaluation:
+  k_values: [1, 5, 10, 100]
+  query_batch_size: 256
+  candidate_chunk_size: 32768
+  max_exact_pairs: 10000
+  checkpoint: /data/code/tessera_skyscript_retrieval/artifacts/runs/default/best.pt
+  report: /data/code/tessera_skyscript_retrieval/artifacts/runs/default/evaluation.json
+
+index:
+  output_dir: /data/code/tessera_skyscript_retrieval/artifacts/index
+  feature_dtype: float16
+  prompt_templates:
+    - "{query}"
+    - "An aerial image. It shows: {query}."
+    - "A satellite image showing {query}."
+    - "Remote sensing imagery containing {query}."

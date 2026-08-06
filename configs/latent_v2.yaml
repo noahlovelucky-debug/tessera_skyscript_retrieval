@@ -1,0 +1,96 @@
+data:
+  source_manifest: /data/tessera_dataset/image-emb-text/manifest_520k.csv
+  image_root: /data/tessera_dataset/image-emb-text
+  chip_root: /data/tessera_dataset/image-emb-text/tessera_chips/npy
+  metadata_root: /data/tessera_v2_sentinel/tessera_v2
+  prepared_manifest: /data/code/tessera_skyscript_retrieval/artifacts/prepared_manifest.parquet
+  allowed_sources: [CH, US, FI, ES]
+  split_seed: 42
+  train_percent: 80
+  val_percent: 10
+  oov_min_samples: 100
+  oov_percent: 10
+
+skyclip:
+  repository: /data/code/tessera_skyscript_retrieval/third_party/SkyScript
+  checkpoint_zip: /data/code/tessera_skyscript_retrieval/checkpoints/SkyCLIP_ViT_L14_top30pct_filtered_by_CLIP_laion_RS.zip
+  checkpoint: /data/code/tessera_skyscript_retrieval/checkpoints/SkyCLIP_ViT_L14_top30pct_filtered_by_CLIP_laion_RS/epoch_20.pt
+  model: ViT-L-14
+  embedding_dim: 768
+  image_batch_size: 128
+  workers: 8
+  cache_dir: /data/code/tessera_skyscript_retrieval/artifacts/cache/skyclip_latent_v2
+  token_pooling_grid: [2, 4]
+  keep_rank_shards: false
+
+tessera:
+  embedding_dim: 128
+  pyramid_levels: [1, 2, 4]
+  include_std: true
+  descriptor_dim: 2816
+  cache_dir: /data/code/tessera_skyscript_retrieval/artifacts/cache/tessera
+  workers: 16
+
+model:
+  architecture: latent_v2
+  common_dim: 768
+  hidden_dim: 2048
+  latent_count: 8
+  latent_dim: 1024
+  highres_layers: 2
+  highres_heads: 16
+  highres_feedforward_dim: 2048
+  tessera_width: 768
+  tessera_layers: 4
+  tessera_heads: 12
+  tessera_feedforward_dim: 3072
+  dropout: 0.1
+  temperature: 0.07
+
+training:
+  output_dir: /data/code/tessera_skyscript_retrieval/artifacts/runs/latent_v2
+  epochs: 30
+  batch_size: 256
+  titles_per_batch: 64
+  samples_per_title: 4
+  learning_rate: 0.0001
+  highres_learning_rate: 0.00005
+  temperature_learning_rate: 0.0005
+  weight_decay: 0.02
+  warmup_ratio: 0.05
+  max_grad_norm: 1.0
+  mixed_precision: true
+  early_stopping_patience: 6
+  max_validation_candidates: 20000
+  monitor_k_values: [10, 100]
+  workers: 4
+  seed: 42
+  tessera_semantic_weight: 1.0
+  highres_semantic_weight: 0.5
+  fine_semantic_weight: 1.0
+  pair_distill_weight: 0.5
+  relation_distill_weight: 0.25
+  teacher_preservation_weight: 0.25
+  latent_diversity_weight: 0.02
+
+evaluation:
+  k_values: [1, 5, 10, 100]
+  query_batch_size: 256
+  candidate_chunk_size: 32768
+  fine_query_batch_size: 64
+  fine_candidate_chunk_size: 8192
+  fine_prefilter_query_batch_size: 8
+  fine_weight: 0.65
+  max_exact_pairs: 10000
+  checkpoint: /data/code/tessera_skyscript_retrieval/artifacts/runs/latent_v2/best.pt
+  report: /data/code/tessera_skyscript_retrieval/artifacts/runs/latent_v2/evaluation.json
+
+index:
+  output_dir: /data/code/tessera_skyscript_retrieval/artifacts/index_latent_v2
+  feature_dtype: float16
+  fine_prefilter: 1000
+  prompt_templates:
+    - "{query}"
+    - "An aerial image. It shows: {query}."
+    - "A satellite image showing {query}."
+    - "Remote sensing imagery containing {query}."

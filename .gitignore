@@ -1,0 +1,12 @@
+.venv/
+.cache/
+.tools/
+artifacts/
+checkpoints/*.zip
+checkpoints/*.aria2
+checkpoints/hf_mirror/
+checkpoints/SkyCLIP_*/
+third_party/
+__pycache__/
+.pytest_cache/
+*.pyc

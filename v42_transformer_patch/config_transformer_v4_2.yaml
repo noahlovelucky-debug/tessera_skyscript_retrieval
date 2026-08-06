@@ -1,0 +1,74 @@
+data:
+  dataset_root: /data/baidu_poi_dataset/good_data
+  prepared_dir: /data/baidu_poi_dataset/good_data/patch_vit_retrieval
+  max_text_length: 64
+student:
+  token_cache: /data/baidu_poi_dataset/good_data/patch_vit_retrieval/token_cache.h5
+  preload_token_cache: true
+tessera:
+  feature_cache: /data/baidu_poi_dataset/good_data/patch_vit_retrieval/tessera_multiscale_384.npz
+model:
+  architecture: transformer_v42
+  text_model: /home/star/tessera/tessera-vlm/models/bge-small-en-v1.5
+  mlp_hidden_dim: 1536
+  transformer_layers: 4
+  transformer_heads: 12
+  transformer_feedforward_dim: 1536
+  dropout: 0.1
+  temperature: 0.07
+  localization_temperature: 0.07
+  local_sigma: 1.0
+  prototypes_per_class: 3
+  tessera_teacher_checkpoint: /home/star/tessera_runs/baidu_tessera_good_data_baseline/best.pt
+  base_checkpoint: /home/star/tessera_runs/baidu_patch_vit_hierarchical_v4_2/best_retrieval.pt
+training:
+  epochs: 32
+  categories_per_batch: 16
+  samples_per_category: 4
+  image_learning_rate: 0.00005
+  text_adapter_learning_rate: 0.00004
+  head_learning_rate: 0.00008
+  text_learning_rate: 0.0000003
+  text_encoder_unfreeze_epoch: 8
+  text_encoder_layers: 2
+  temperature_learning_rate: 0.00003
+  weight_decay: 0.05
+  max_grad_norm: 1.0
+  workers: 4
+  mixed_precision: true
+  early_stopping_start_epoch: 13
+  early_stopping_patience: 10
+  seed: 59
+loss:
+  global_retrieval_weight: 1.0
+  local_retrieval_weight: 0.7
+  prototype_weight: 0.2
+  prototype_temperature: 0.1
+  localization_exact_weight: 0.8
+  same_image_hard_weight: 0.25
+  same_image_margin: 0.15
+  same_image_exclusion_radius: 1
+  global_confusion_weight: 0.2
+  local_confusion_weight: 0.2
+  confusion_margin: 0.1
+  text_consistency_weight: 0.15
+  distill_local_weight: 0.25
+evaluation:
+  k_values: [1, 5, 10]
+  batch_size: 128
+  workers: 2
+  hierarchical_top_m: 50
+  hierarchical_local_weight: 0.3
+  hierarchical_query_batch_size: 8
+  acceptance_targets:
+    macro_r1: 0.3947
+    category_r1: 0.4675
+    exact_top1: 0.0437
+    map: 0.2714
+  oov_query_templates:
+    - satellite image of {category}
+    - aerial view of {category}
+    - remote sensing image showing {category}
+    - overhead image containing {category}
+output:
+  v42_dir: /data/code/tessera_skyscript_retrieval/artifacts/runs/patch_vit_transformer_v42

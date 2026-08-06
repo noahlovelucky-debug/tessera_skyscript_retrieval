@@ -1,0 +1,126 @@
+{
+  "model": "gpt-5.6-luna",
+  "retrieval_checkpoints": {
+    "gated_highres": "/data/code/tessera_skyscript_retrieval/artifacts/runs/gated_coarse_v3/best.pt",
+    "latent_v2_highres_fine": "/data/code/tessera_skyscript_retrieval/artifacts/runs/latent_v2/best.pt",
+    "latent_v2_tessera": "/data/code/tessera_skyscript_retrieval/artifacts/runs/latent_v2/best.pt",
+    "tessera_v1_box_mlp": "/data/code/tessera_skyscript_retrieval/artifacts/runs/tessera_box_v1/best.pt"
+  },
+  "candidate_split": "test",
+  "candidate_count": 39344,
+  "top_k": 10,
+  "systems": {
+    "gated_highres": {
+      "mean_luna_visual_precision_at_k": 0.7666666666666667,
+      "mean_luna_visual_hit_at_k": 1.0,
+      "mean_luna_discounted_relevance_at_k": 0.7654369923155576,
+      "queries": {
+        "river": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9337457765456111,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.5627003908157349
+        },
+        "school": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8643145546088339,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.5156893730163574
+        },
+        "farmland": {
+          "luna_visual_precision_at_k": 0.6,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.49825064579222805,
+          "luna_relevant_count": 6,
+          "gate_global_weight": 0.5699762105941772
+        }
+      }
+    },
+    "latent_v2_highres_fine": {
+      "mean_luna_visual_precision_at_k": 0.9333333333333332,
+      "mean_luna_visual_hit_at_k": 1.0,
+      "mean_luna_discounted_relevance_at_k": 0.9494126029739882,
+      "queries": {
+        "river": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": NaN
+        },
+        "school": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": NaN
+        },
+        "farmland": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8482378089219648,
+          "luna_relevant_count": 8,
+          "gate_global_weight": NaN
+        }
+      }
+    },
+    "latent_v2_tessera": {
+      "mean_luna_visual_precision_at_k": 0.7666666666666666,
+      "mean_luna_visual_hit_at_k": 1.0,
+      "mean_luna_discounted_relevance_at_k": 0.7708430384071822,
+      "queries": {
+        "river": {
+          "luna_visual_precision_at_k": 0.5,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.45718160765461074,
+          "luna_relevant_count": 5,
+          "gate_global_weight": NaN
+        },
+        "school": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9216017310213247,
+          "luna_relevant_count": 9,
+          "gate_global_weight": NaN
+        },
+        "farmland": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9337457765456111,
+          "luna_relevant_count": 9,
+          "gate_global_weight": NaN
+        }
+      }
+    },
+    "tessera_v1_box_mlp": {
+      "mean_luna_visual_precision_at_k": 0.6,
+      "mean_luna_visual_hit_at_k": 1.0,
+      "mean_luna_discounted_relevance_at_k": 0.6124047716866329,
+      "queries": {
+        "river": {
+          "luna_visual_precision_at_k": 0.6,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.5617131059245699,
+          "luna_relevant_count": 6,
+          "gate_global_weight": NaN
+        },
+        "school": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.42333070005078105,
+          "luna_relevant_count": 4,
+          "gate_global_weight": NaN
+        },
+        "farmland": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8521705090845474,
+          "luna_relevant_count": 8,
+          "gate_global_weight": NaN
+        }
+      }
+    }
+  }
+}

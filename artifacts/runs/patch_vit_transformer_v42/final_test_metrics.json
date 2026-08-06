@@ -1,0 +1,97 @@
+{
+  "model": "transformer_v42",
+  "checkpoint": "/data/code/tessera_skyscript_retrieval/artifacts/runs/patch_vit_transformer_v42/best.pt",
+  "checkpoint_epoch": 10,
+  "test_rows": 847,
+  "oov_rows": 77,
+  "closed_test": {
+    "global_mAP": 0.17425912218351483,
+    "global_MRR": 0.4806569480613591,
+    "global_macro_category_R@1": 0.21052631578947367,
+    "global_category_R@1": 0.2939787485242031,
+    "global_exact_patch_R@1": 0.010625737898465172,
+    "global_category_R@5": 0.7461629279811098,
+    "global_exact_patch_R@5": 0.04604486422668241,
+    "global_category_R@10": 0.8772136953955135,
+    "global_exact_patch_R@10": 0.08382526564344746,
+    "local_mAP": 0.259473272460411,
+    "local_MRR": 0.5510233729049497,
+    "local_macro_category_R@1": 0.23684210526315788,
+    "local_category_R@1": 0.3270365997638725,
+    "local_exact_patch_R@1": 0.014167650531286895,
+    "local_category_R@5": 0.8217237308146399,
+    "local_exact_patch_R@5": 0.06729634002361275,
+    "local_category_R@10": 0.9574970484061394,
+    "local_exact_patch_R@10": 0.11688311688311688,
+    "localization_exact_token_top1": 0.03778040036559105,
+    "localization_exact_token_top5": 0.14049586653709412,
+    "localization_neighbor_top1": 0.1652892529964447,
+    "localization_neighbor_top5": 0.4332939684391022,
+    "localization_median_rank": 34.0,
+    "localization_mean_token_distance": 4.932175636291504,
+    "hierarchical_mAP": 0.08707336041030556,
+    "hierarchical_MRR": 0.46476510054152503,
+    "hierarchical_macro_category_R@1": 0.21052631578947367,
+    "hierarchical_e2e_category_exact_token_R@1": 0.0,
+    "hierarchical_e2e_category_neighbor_R@1": 0.02715466351829988,
+    "hierarchical_e2e_own_patch_exact_token_R@1": 0.0,
+    "hierarchical_e2e_own_patch_neighbor_R@1": 0.0011806375442739079,
+    "hierarchical_shortlist_size": 50.0,
+    "hierarchical_local_weight": 0.3,
+    "hierarchical_category_R@1": 0.2833530106257379,
+    "hierarchical_exact_patch_R@1": 0.010625737898465172,
+    "hierarchical_category_R@5": 0.7343565525383707,
+    "hierarchical_exact_patch_R@5": 0.048406139315230225,
+    "hierarchical_category_R@10": 0.9138134592680047,
+    "hierarchical_exact_patch_R@10": 0.09090909090909091
+  },
+  "acceptance_targets": {
+    "macro_r1": 0.3947,
+    "category_r1": 0.4675,
+    "exact_top1": 0.0437,
+    "map": 0.2714
+  },
+  "acceptance": {
+    "macro_r1": false,
+    "category_r1": false,
+    "exact_top1": false,
+    "map": false
+  },
+  "acceptance_by_branch": {
+    "global": {
+      "macro_r1": false,
+      "category_r1": false,
+      "exact_top1": false,
+      "map": false
+    },
+    "local": {
+      "macro_r1": false,
+      "category_r1": false,
+      "exact_top1": false,
+      "map": false
+    }
+  },
+  "all_targets_met": false,
+  "oov": {
+    "oov_global_mAP": 0.15919689130282913,
+    "oov_global_MRR": 0.08333333333333333,
+    "oov_global_macro_category_R@1": 0.0,
+    "oov_global_category_R@1": 0.0,
+    "oov_global_category_R@5": 0.0,
+    "oov_global_category_R@10": 0.0,
+    "oov_local_mAP": 0.1485085665140762,
+    "oov_local_MRR": 1.0,
+    "oov_local_macro_category_R@1": 1.0,
+    "oov_local_category_R@1": 1.0,
+    "oov_local_category_R@5": 1.0,
+    "oov_local_category_R@10": 1.0
+  },
+  "oov_localization": {
+    "localization_exact_token_top1": 0.0,
+    "localization_exact_token_top5": 0.0,
+    "localization_neighbor_top1": 0.03896103799343109,
+    "localization_neighbor_top5": 0.19480518996715546,
+    "localization_median_rank": 105.0,
+    "localization_mean_token_distance": 6.726297855377197
+  }
+}
