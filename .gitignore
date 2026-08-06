@@ -2,6 +2,7 @@
 .cache/
 .tools/
 artifacts/
+logs/
 checkpoints/*.zip
 checkpoints/*.aria2
 checkpoints/hf_mirror/
