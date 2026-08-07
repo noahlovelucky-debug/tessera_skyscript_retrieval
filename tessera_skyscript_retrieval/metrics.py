@@ -238,6 +238,46 @@ def gated_coarse_topk(
 
 
 @torch.inference_mode()
+def tri_modal_topk(
+    text_global: np.ndarray,
+    text_latents: np.ndarray,
+    fusion_weights: np.ndarray,
+    tessera: np.ndarray,
+    highres_global: np.ndarray,
+    highres_latents: np.ndarray,
+    top_k: int,
+    device: torch.device,
+    query_batch_size: int = 16,
+    candidate_chunk_size: int = 8192,
+    local_logit_ratio: float = 1.0,
+) -> np.ndarray:
+    """Exact TopK using paired Sentinel, high-resolution global, and local scores."""
+    candidate_count = len(tessera)
+    if not (len(highres_global) == len(highres_latents) == candidate_count):
+        raise ValueError("tri-modal candidate representations must have equal length")
+    top_k = min(top_k, candidate_count)
+    sentinel = F.normalize(torch.from_numpy(np.asarray(tessera, dtype=np.float32)).to(device), dim=-1)
+    globals_ = F.normalize(torch.from_numpy(np.asarray(highres_global, dtype=np.float32)).to(device), dim=-1)
+    latents = F.normalize(torch.from_numpy(np.asarray(highres_latents, dtype=np.float32)).to(device), dim=-1)
+    output = np.empty((len(text_global), top_k), dtype=np.int64)
+    for start in range(0, len(text_global), query_batch_size):
+        stop = min(start + query_batch_size, len(text_global))
+        global_query = F.normalize(torch.from_numpy(np.asarray(text_global[start:stop], dtype=np.float32)).to(device), dim=-1)
+        local_query = F.normalize(torch.from_numpy(np.asarray(text_latents[start:stop], dtype=np.float32)).to(device), dim=-1)
+        weights = torch.from_numpy(np.asarray(fusion_weights[start:stop], dtype=np.float32)).to(device)
+        sentinel_scores = global_query @ sentinel.T
+        global_scores = global_query @ globals_.T
+        local_scores = torch.einsum("qd,ckd->qck", local_query, latents).amax(dim=-1)
+        scores = (
+            weights[:, 0:1] * sentinel_scores
+            + weights[:, 1:2] * global_scores
+            + weights[:, 2:3] * float(local_logit_ratio) * local_scores
+        )
+        output[start:stop] = scores.topk(top_k, dim=1).indices.cpu().numpy()
+    return output
+
+
+@torch.inference_mode()
 def late_interaction_prefilter_topk(
     text_latents: np.ndarray,
     image_latents: np.ndarray,

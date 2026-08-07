@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 import json
+import math
+import os
 import random
 from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
 import torch
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
-from .config import ensure_dir, uses_text_gated_coarse
+from .config import ensure_dir, uses_text_gated_coarse, uses_tri_modal_fusion
 from .data import load_prepared
 from .features import load_latent_feature_arrays
 from .latent import encode_latent_features, encode_text_gates, encode_text_latents
@@ -19,6 +23,7 @@ from .metrics import (
     gated_coarse_topk,
     semantic_retrieval_metrics,
     semantic_topk_metrics,
+    tri_modal_topk,
 )
 from .model import build_latent_model
 from .training import TitleBalancedBatchSampler, _cosine_schedule
@@ -77,6 +82,28 @@ def _collate_latent(batch: list[dict]) -> dict[str, torch.Tensor]:
     }
 
 
+class DistributedTitleBatchSampler:
+    """Shard deterministic title-balanced batches while keeping DDP step counts equal."""
+
+    def __init__(self, sampler, rank: int, world_size: int) -> None:
+        self.sampler = sampler
+        self.rank = rank
+        self.world_size = world_size
+        self.batches_per_rank = math.ceil(len(sampler) / world_size)
+
+    def set_epoch(self, epoch: int) -> None:
+        self.sampler.set_epoch(epoch)
+
+    def __len__(self) -> int:
+        return self.batches_per_rank
+
+    def __iter__(self):
+        batches = list(self.sampler)
+        for local_step in range(self.batches_per_rank):
+            # Pad only the final incomplete distributed round, as DistributedSampler does.
+            yield batches[(self.rank + local_step * self.world_size) % len(batches)]
+
+
 @torch.inference_mode()
 def _validation_metrics(
     model,
@@ -106,7 +133,21 @@ def _validation_metrics(
         text_global, unique, highres_global, labels, k_values
     )
     text_gates = encode_text_gates(model, text_global, device)
-    if uses_text_gated_coarse(config):
+    if uses_tri_modal_fusion(config):
+        with torch.inference_mode():
+            fusion_weights = model.encode_fusion_weights(
+                torch.from_numpy(text_global).to(device)
+            ).cpu().numpy()
+        highres_indices = tri_modal_topk(
+            text_global, text_latents, fusion_weights, tessera, highres_global,
+            highres_latents, max(k_values), device,
+            query_batch_size=int(config["evaluation"].get("gated_query_batch_size", 16)),
+            candidate_chunk_size=int(config["evaluation"].get("gated_candidate_chunk_size", 8192)),
+            local_logit_ratio=float(
+                (model.fine_logit_scale.exp() / model.logit_scale.exp()).cpu()
+            ),
+        )
+    elif uses_text_gated_coarse(config):
         highres_indices = gated_coarse_topk(
             text_global,
             text_latents,
@@ -140,17 +181,17 @@ def _validation_metrics(
     primary_keys = [
         f"{metric}@{k}" for k in k_values for metric in ("Precision", "nDCG")
     ]
-    primary_score = float(
-        np.mean(
-            [tessera_metrics[key] for key in primary_keys]
-            + [highres_rank_metrics[key] for key in primary_keys]
-        )
-    )
+    primary_score = float(np.mean([
+        highres_rank_metrics[key] for key in primary_keys
+    ])) if uses_tri_modal_fusion(config) else float(np.mean(
+        [tessera_metrics[key] for key in primary_keys]
+        + [highres_rank_metrics[key] for key in primary_keys]
+    ))
     result = {"primary_score": primary_score}
     for prefix, values in (
         ("tessera", tessera_metrics),
         ("highres_global", highres_global_metrics),
-        ("highres_gated" if uses_text_gated_coarse(config) else "highres_fine", highres_rank_metrics),
+        ("tri_modal_fused" if uses_tri_modal_fusion(config) else "highres_gated" if uses_text_gated_coarse(config) else "highres_fine", highres_rank_metrics),
     ):
         for key in primary_keys:
             result[f"{prefix}_{key}"] = float(values[key])
@@ -158,6 +199,16 @@ def _validation_metrics(
 
 
 def train_latent_model(config: dict, limit: int | None = None) -> Path:
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    distributed = world_size > 1
+    rank = int(os.environ.get("RANK", "0"))
+    local_rank = int(os.environ.get("LOCAL_RANK", "0"))
+    if distributed:
+        if not torch.cuda.is_available():
+            raise RuntimeError("multi-process latent training requires CUDA")
+        torch.cuda.set_device(local_rank)
+        dist.init_process_group(backend="nccl")
+    is_main = rank == 0
     seed = int(config["training"]["seed"])
     random.seed(seed)
     np.random.seed(seed)
@@ -181,11 +232,16 @@ def train_latent_model(config: dict, limit: int | None = None) -> Path:
             f"{len(train_set)}, {len(val_set)}"
         )
     cfg = config["training"]
-    sampler = TitleBalancedBatchSampler(
+    base_sampler = TitleBalancedBatchSampler(
         train_set,
         int(cfg["titles_per_batch"]),
         int(cfg["samples_per_title"]),
         seed,
+    )
+    sampler = (
+        DistributedTitleBatchSampler(base_sampler, rank, world_size)
+        if distributed
+        else base_sampler
     )
     loader = DataLoader(
         train_set,
@@ -195,29 +251,55 @@ def train_latent_model(config: dict, limit: int | None = None) -> Path:
         pin_memory=True,
         persistent_workers=int(cfg.get("workers", 4)) > 0,
     )
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{local_rank}" if torch.cuda.is_available() else "cpu")
     model = build_latent_model(config).to(device)
     architecture = config["model"].get("architecture", "latent_v2")
     warm_start = config["model"].get("warm_start_checkpoint")
     if warm_start:
         checkpoint = torch.load(warm_start, map_location="cpu", weights_only=False)
-        model.load_state_dict(checkpoint["model_state"], strict=True)
-        model.highres_adapter.initialize_anchor_gate()
-        print(f"warm-started {architecture} from {warm_start}")
+        incompatible = model.load_state_dict(checkpoint["model_state"], strict=False)
+        allowed_missing = {
+            "fusion_gate.0.weight", "fusion_gate.0.bias",
+            "fusion_gate.1.weight", "fusion_gate.1.bias",
+            "fusion_gate.3.weight", "fusion_gate.3.bias",
+        }
+        unexpected = set(incompatible.unexpected_keys)
+        missing = set(incompatible.missing_keys)
+        if unexpected or missing - allowed_missing:
+            raise RuntimeError(
+                f"incompatible warm start {warm_start}: "
+                f"missing={sorted(missing)}, unexpected={sorted(unexpected)}"
+            )
+        if architecture == "anchored_gated_v4":
+            model.highres_adapter.initialize_anchor_gate()
+        if is_main:
+            print(f"warm-started {architecture} from {warm_start}")
+    model_core = model
+    if distributed:
+        model = DistributedDataParallel(
+            model,
+            device_ids=[local_rank],
+            output_device=local_rank,
+            broadcast_buffers=False,
+        )
     optimizer = torch.optim.AdamW(
         [
             {
-                "params": model.tessera_adapter.parameters(),
+                "params": model_core.tessera_adapter.parameters(),
                 "lr": float(cfg["learning_rate"]),
             },
             {
-                "params": model.highres_adapter.parameters(),
+                "params": model_core.highres_adapter.parameters(),
                 "lr": float(cfg["highres_learning_rate"]),
             },
             {
-                "params": [model.logit_scale, model.fine_logit_scale],
+                "params": [model_core.logit_scale, model_core.fine_logit_scale],
                 "lr": float(cfg["temperature_learning_rate"]),
                 "weight_decay": 0.0,
+            },
+            {
+                "params": model_core.fusion_gate.parameters(),
+                "lr": float(cfg.get("fusion_learning_rate", cfg["highres_learning_rate"])),
             },
         ],
         weight_decay=float(cfg["weight_decay"]),
@@ -236,14 +318,22 @@ def train_latent_model(config: dict, limit: int | None = None) -> Path:
     best_metric, stale = -1.0, 0
     history = []
     trainable_parameters = sum(
-        parameter.numel() for parameter in model.parameters() if parameter.requires_grad
+        parameter.numel() for parameter in model_core.parameters() if parameter.requires_grad
     )
-    print(f"{architecture} trainable parameters: {trainable_parameters:,}")
+    if is_main:
+        print(
+            f"{architecture} trainable parameters: {trainable_parameters:,}; "
+            f"world_size={world_size}; batches_per_rank={len(loader)}"
+        )
     for epoch in range(int(cfg["epochs"])):
         model.train()
         sampler.set_epoch(epoch)
         totals = defaultdict(float)
-        for batch in tqdm(loader, desc=f"train-{architecture}-{epoch + 1}"):
+        for batch in tqdm(
+            loader,
+            desc=f"train-{architecture}-{epoch + 1}",
+            disable=not is_main,
+        ):
             descriptors_batch = batch["descriptors"].to(device, non_blocking=True)
             teacher_batch = torch.nn.functional.normalize(
                 batch["highres"].to(device, non_blocking=True), dim=-1
@@ -259,23 +349,21 @@ def train_latent_model(config: dict, limit: int | None = None) -> Path:
                 dtype=torch.bfloat16,
                 enabled=scaler.is_enabled(),
             ):
-                tessera_batch = model.encode_tessera(descriptors_batch)
-                highres_batch, latent_batch = model.encode_highres(
-                    token_batch, teacher_batch
+                outputs = model(
+                    descriptors_batch, token_batch, teacher_batch, text_batch
                 )
-                text_latent_batch = model.encode_text_latent(text_batch)
-                text_gate_batch = model.encode_text_gate(text_batch)
                 losses = latent_alignment_losses(
-                    tessera_batch,
-                    highres_batch,
-                    latent_batch,
+                    outputs["tessera"],
+                    outputs["highres_global"],
+                    outputs["highres_latents"],
                     teacher_batch,
                     text_batch,
-                    text_latent_batch,
-                    text_gate_batch,
+                    outputs["text_latent"],
+                    outputs["text_gate"],
+                    outputs["fusion_weights"],
                     title_ids,
-                    model.logit_scale,
-                    model.fine_logit_scale,
+                    model_core.logit_scale,
+                    model_core.fine_logit_scale,
                     cfg,
                 )
             scaler.scale(losses["total"]).backward()
@@ -286,41 +374,54 @@ def train_latent_model(config: dict, limit: int | None = None) -> Path:
             scaler.step(optimizer)
             scaler.update()
             scheduler.step()
-            model.clamp_temperature()
+            model_core.clamp_temperature()
             for key, value in losses.items():
                 totals[key] += float(value.detach())
-        validation = _validation_metrics(
-            model,
-            val_set,
-            device,
-            int(cfg["max_validation_candidates"]),
-            config,
+        averages = {key: value / len(loader) for key, value in totals.items()}
+        if distributed:
+            for key, value in list(averages.items()):
+                reduced = torch.tensor(value, device=device)
+                dist.all_reduce(reduced, op=dist.ReduceOp.SUM)
+                averages[key] = float(reduced.cpu()) / world_size
+        if is_main:
+            validation = _validation_metrics(
+                model_core,
+                val_set,
+                device,
+                int(cfg["max_validation_candidates"]),
+                config,
+            )
+            metric = validation["primary_score"]
+            record = {"epoch": epoch + 1, **validation, **averages}
+            history.append(record)
+            print(record)
+            checkpoint = {
+                "model_state": model_core.state_dict(),
+                "config": config,
+                "epoch": epoch + 1,
+                "metric": metric,
+                "trainable_parameters": trainable_parameters,
+                "world_size": world_size,
+            }
+            torch.save(checkpoint, output_dir / "latest.pt")
+            if metric > best_metric:
+                best_metric, stale = metric, 0
+                torch.save(checkpoint, best_path)
+            else:
+                stale += 1
+        stop = is_main and stale >= int(cfg["early_stopping_patience"])
+        if distributed:
+            stop_value = torch.tensor(int(stop), device=device)
+            dist.broadcast(stop_value, src=0)
+            stop = bool(stop_value.item())
+        if stop:
+            break
+    if is_main:
+        (output_dir / "history.json").write_text(
+            json.dumps(history, indent=2) + "\n", encoding="utf-8"
         )
-        metric = validation["primary_score"]
-        record = {
-            "epoch": epoch + 1,
-            **validation,
-            **{key: value / len(loader) for key, value in totals.items()},
-        }
-        history.append(record)
-        print(record)
-        checkpoint = {
-            "model_state": model.state_dict(),
-            "config": config,
-            "epoch": epoch + 1,
-            "metric": metric,
-            "trainable_parameters": trainable_parameters,
-        }
-        torch.save(checkpoint, output_dir / "latest.pt")
-        if metric > best_metric:
-            best_metric, stale = metric, 0
-            torch.save(checkpoint, best_path)
-        else:
-            stale += 1
-            if stale >= int(cfg["early_stopping_patience"]):
-                break
-    (output_dir / "history.json").write_text(
-        json.dumps(history, indent=2) + "\n", encoding="utf-8"
-    )
-    print(f"best validation primary score={best_metric:.6f}: {best_path}")
+        print(f"best validation primary score={best_metric:.6f}: {best_path}")
+    if distributed:
+        dist.barrier()
+        dist.destroy_process_group()
     return best_path

@@ -30,6 +30,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--terra-batch-size", type=int, default=10)
     parser.add_argument("--image-size", type=int, default=768)
     parser.add_argument(
+        "--skip-sol-rerank",
+        action="store_true",
+        help="Keep the input coarse order and run only Terra evaluation.",
+    )
+    parser.add_argument(
         "--strict-definition",
         help="Require an exact visible object match; context and related infrastructure are negative.",
     )
@@ -210,33 +215,36 @@ def main() -> None:
             raise ValueError(f"expected 100 candidates for {query!r}, got {len(rows)}")
         rows = rows.sort_values("rank").reset_index(drop=True)
         rows["coarse_rank"] = rows["rank"].astype(int)
-        stage1_values: list[dict] = []
         raw_responses[query] = []
-        for start in range(0, len(rows), args.stage1_batch_size):
-            batch = rows.iloc[start : start + args.stage1_batch_size]
-            values, raw = sol_stage1(query, batch, api_key, args)
-            stage1_values.extend(values)
-            raw_responses[query].append({"sol_stage1": raw})
-        stage1 = pd.DataFrame(stage1_values).rename(
-            columns={
-                "rank": "coarse_rank",
-                "confidence": "sol_confidence",
-                "visible_evidence": "sol_visible_evidence",
-            }
-        )
-        rows = rows.merge(stage1, on="coarse_rank", validate="one_to_one")
-        rows = rows.sort_values(
-            ["relevance", "sol_confidence", "coarse_rank"], ascending=[False, False, True]
-        )
-        finalists = rows.head(args.stage2_top_n).copy()
-        ordered, raw = sol_stage2(query, finalists, api_key, args)
-        raw_responses[query].append({"sol_stage2": raw})
-        selected_ranks = set(ordered)
-        final_order = ordered + [
-            int(value) for value in rows["coarse_rank"] if int(value) not in selected_ranks
-        ]
-        final_positions = {coarse_rank: rank for rank, coarse_rank in enumerate(final_order, start=1)}
-        rows["rank"] = rows["coarse_rank"].map(final_positions).astype(int)
+        if args.skip_sol_rerank:
+            rows["rank"] = rows["coarse_rank"]
+        else:
+            stage1_values: list[dict] = []
+            for start in range(0, len(rows), args.stage1_batch_size):
+                batch = rows.iloc[start : start + args.stage1_batch_size]
+                values, raw = sol_stage1(query, batch, api_key, args)
+                stage1_values.extend(values)
+                raw_responses[query].append({"sol_stage1": raw})
+            stage1 = pd.DataFrame(stage1_values).rename(
+                columns={
+                    "rank": "coarse_rank",
+                    "confidence": "sol_confidence",
+                    "visible_evidence": "sol_visible_evidence",
+                }
+            )
+            rows = rows.merge(stage1, on="coarse_rank", validate="one_to_one")
+            rows = rows.sort_values(
+                ["relevance", "sol_confidence", "coarse_rank"], ascending=[False, False, True]
+            )
+            finalists = rows.head(args.stage2_top_n).copy()
+            ordered, raw = sol_stage2(query, finalists, api_key, args)
+            raw_responses[query].append({"sol_stage2": raw})
+            selected_ranks = set(ordered)
+            final_order = ordered + [
+                int(value) for value in rows["coarse_rank"] if int(value) not in selected_ranks
+            ]
+            final_positions = {coarse_rank: rank for rank, coarse_rank in enumerate(final_order, start=1)}
+            rows["rank"] = rows["coarse_rank"].map(final_positions).astype(int)
         rows = rows.sort_values("rank").reset_index(drop=True)
         judgments: list[dict] = []
         for start in range(0, len(rows), args.terra_batch_size):
@@ -249,10 +257,9 @@ def main() -> None:
         )
         rows = rows.merge(judged, on="rank", validate="one_to_one")
         all_ranked.append(rows)
-        summaries[query] = {
-            "coarse_order": metric_summary(rows, "coarse_rank"),
-            "sol_rerank": metric_summary(rows),
-        }
+        summaries[query] = {"coarse_order": metric_summary(rows, "coarse_rank")}
+        if not args.skip_sol_rerank:
+            summaries[query]["sol_rerank"] = metric_summary(rows)
         pd.concat(all_ranked, ignore_index=True).to_csv(output_dir / "sol_terra_progress.csv", index=False)
         (output_dir / "raw_responses_progress.json").write_text(
             json.dumps(raw_responses, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -264,8 +271,8 @@ def main() -> None:
         "sol_model": args.sol_model,
         "terra_model": args.terra_model,
         "candidate_source": str(Path(args.candidates).resolve()),
-        "stage1": "Sol assigns 0-4 relevance and confidence to every image in batches.",
-        "stage2": f"Sol globally orders the stage-1 Top-{args.stage2_top_n}; remaining candidates retain stage-1 order.",
+        "stage1": None if args.skip_sol_rerank else "Sol assigns 0-4 relevance and confidence to every image in batches.",
+        "stage2": None if args.skip_sol_rerank else f"Sol globally orders the stage-1 Top-{args.stage2_top_n}; remaining candidates retain stage-1 order.",
         "strict_definition": args.strict_definition,
         "per_query": summaries,
         "mean": {

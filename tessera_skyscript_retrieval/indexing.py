@@ -8,7 +8,12 @@ import numpy as np
 import pandas as pd
 import torch
 
-from .config import ensure_dir, uses_latent_tokens, uses_text_gated_coarse
+from .config import (
+    ensure_dir,
+    uses_latent_tokens,
+    uses_text_gated_coarse,
+    uses_tri_modal_fusion,
+)
 from .data import load_prepared
 from .evaluation import encode_tessera
 from .features import load_feature_arrays, load_latent_feature_arrays
@@ -86,7 +91,9 @@ def _build_latent_index(
                 "checkpoint": str(checkpoint_value),
                 "normalized": True,
                 "retrieval_mode": (
-                    "text_gated_full_scan"
+                    "tri_modal_text_gated_full_scan"
+                    if uses_tri_modal_fusion(config)
+                    else "text_gated_full_scan"
                     if uses_text_gated_coarse(config)
                     else "global_prefilter_then_late_interaction"
                 ),
@@ -172,6 +179,60 @@ def _gated_top_scores(
     )
 
 
+def _tri_modal_top_scores(
+    tessera_features: np.ndarray,
+    highres_features: np.ndarray,
+    local_features: np.ndarray,
+    global_query: np.ndarray,
+    local_query: np.ndarray,
+    fusion_weights: np.ndarray,
+    local_logit_ratio: float,
+    top_k: int,
+    chunk_size: int,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Exact on-disk three-way search over paired Sentinel and high-res rows."""
+    best_scores = np.empty(0, dtype=np.float32)
+    best_indices = np.empty(0, dtype=np.int64)
+    best_sentinel = np.empty(0, dtype=np.float32)
+    best_global = np.empty(0, dtype=np.float32)
+    best_local = np.empty(0, dtype=np.float32)
+    for start in range(0, len(highres_features), chunk_size):
+        stop = min(start + chunk_size, len(highres_features))
+        sentinel = np.asarray(tessera_features[start:stop], dtype=np.float32)
+        sentinel /= np.maximum(np.linalg.norm(sentinel, axis=1, keepdims=True), 1e-8)
+        globals_ = np.asarray(highres_features[start:stop], dtype=np.float32)
+        globals_ /= np.maximum(np.linalg.norm(globals_, axis=1, keepdims=True), 1e-8)
+        latents = np.asarray(local_features[start:stop], dtype=np.float32)
+        latents /= np.maximum(np.linalg.norm(latents, axis=-1, keepdims=True), 1e-8)
+        sentinel_scores = sentinel @ global_query
+        global_scores = globals_ @ global_query
+        local_scores = np.max(latents @ local_query, axis=1)
+        scores = (
+            fusion_weights[0] * sentinel_scores
+            + fusion_weights[1] * global_scores
+            + fusion_weights[2] * float(local_logit_ratio) * local_scores
+        )
+        local_k = min(top_k, len(scores))
+        local = np.argpartition(scores, -local_k)[-local_k:]
+        best_scores = np.concatenate([best_scores, scores[local]])
+        best_indices = np.concatenate([best_indices, local + start])
+        best_sentinel = np.concatenate([best_sentinel, sentinel_scores[local]])
+        best_global = np.concatenate([best_global, global_scores[local]])
+        best_local = np.concatenate([best_local, local_scores[local]])
+        if len(best_scores) > top_k:
+            keep = np.argpartition(best_scores, -top_k)[-top_k:]
+            best_scores = best_scores[keep]
+            best_indices = best_indices[keep]
+            best_sentinel = best_sentinel[keep]
+            best_global = best_global[keep]
+            best_local = best_local[keep]
+    order = np.argsort(best_scores)[::-1]
+    return (
+        best_scores[order], best_indices[order], best_sentinel[order],
+        best_global[order], best_local[order],
+    )
+
+
 def retrieve_by_modality(
     config: dict,
     query_text: str,
@@ -189,6 +250,8 @@ def retrieve_by_modality(
     query = query / max(float(np.linalg.norm(query)), 1e-8)
     latent_model = None
     text_latent = None
+    fusion_weights = None
+    local_logit_ratio = 1.0
     if uses_latent_tokens(config):
         checkpoint = torch.load(
             index_metadata.get("checkpoint", config["evaluation"]["checkpoint"]),
@@ -208,6 +271,14 @@ def retrieve_by_modality(
                     torch.from_numpy(query.astype(np.float32))[None].to(device)
                 )[0].cpu()
             )
+            if uses_tri_modal_fusion(config):
+                fusion_weights = latent_model.encode_fusion_weights(
+                    torch.from_numpy(query.astype(np.float32))[None].to(device)
+                )[0].cpu().numpy()
+                local_logit_ratio = float(
+                    (latent_model.fine_logit_scale.exp()
+                     / latent_model.logit_scale.exp()).cpu()
+                )
     fields = [
         "sample_id", "title", "source", "year", "image_path", "chip_path",
         "bbox_west", "bbox_south", "bbox_east", "bbox_north", "center_lon", "center_lat",
@@ -215,8 +286,33 @@ def retrieve_by_modality(
     results: dict[str, list[dict[str, Any]]] = {}
     for name in modalities:
         features = np.load(root / f"{name}_features.npy", mmap_mode="r")
-        score_components: tuple[np.ndarray, np.ndarray] | None = None
-        if name == "highres" and latent_model is not None and uses_text_gated_coarse(config):
+        score_components = None
+        if (
+            name == "highres"
+            and latent_model is not None
+            and uses_tri_modal_fusion(config)
+        ):
+            latents = np.load(root / "highres_latents.npy", mmap_mode="r")
+            tessera = np.load(root / "tessera_features.npy", mmap_mode="r")
+            scores, indices, sentinel_scores, global_scores, local_scores = (
+                _tri_modal_top_scores(
+                    tessera,
+                    features,
+                    latents,
+                    query,
+                    text_latent,
+                    fusion_weights,
+                    local_logit_ratio,
+                    top_k,
+                    int(config["evaluation"].get("gated_candidate_chunk_size", 8192)),
+                )
+            )
+            score_components = {
+                "sentinel_score": sentinel_scores,
+                "global_score": global_scores,
+                "local_score": local_scores,
+            }
+        elif name == "highres" and latent_model is not None and uses_text_gated_coarse(config):
             latents = np.load(root / "highres_latents.npy", mmap_mode="r")
             scores, indices, global_scores, local_scores = _gated_top_scores(
                 features,
@@ -227,7 +323,10 @@ def retrieve_by_modality(
                 top_k,
                 int(config["evaluation"].get("gated_candidate_chunk_size", 8192)),
             )
-            score_components = (global_scores, local_scores)
+            score_components = {
+                "global_score": global_scores,
+                "local_score": local_scores,
+            }
         else:
             requested_k = top_k
             if name == "highres" and latent_model is not None:
@@ -258,14 +357,18 @@ def retrieve_by_modality(
             source = metadata.iloc[int(index)]
             result = {"rank": rank, "score": float(score), "modality": name}
             if score_components is not None:
-                global_scores, local_scores = score_components
-                result.update(
-                    {
-                        "global_score": float(global_scores[rank - 1]),
-                        "local_score": float(local_scores[rank - 1]),
-                        "gate_global_weight": text_gate,
-                    }
-                )
+                result.update({
+                    key: float(values[rank - 1])
+                    for key, values in score_components.items()
+                })
+                if uses_tri_modal_fusion(config):
+                    result.update({
+                        "sentinel_weight": float(fusion_weights[0]),
+                        "highres_global_weight": float(fusion_weights[1]),
+                        "highres_local_weight": float(fusion_weights[2]),
+                    })
+                else:
+                    result["gate_global_weight"] = text_gate
             result.update({field: source[field] for field in fields})
             rows.append(result)
         results[name] = rows

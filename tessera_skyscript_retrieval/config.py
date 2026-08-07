@@ -5,7 +5,7 @@ from typing import Any
 
 import yaml
 
-LATENT_ARCHITECTURES = frozenset({"latent_v2", "gated_coarse_v3", "anchored_gated_v4"})
+LATENT_ARCHITECTURES = frozenset({"latent_v2", "gated_coarse_v3", "anchored_gated_v4", "tri_modal_fusion_v1"})
 
 
 def uses_latent_tokens(config: dict[str, Any]) -> bool:
@@ -15,6 +15,10 @@ def uses_latent_tokens(config: dict[str, Any]) -> bool:
 
 def uses_text_gated_coarse(config: dict[str, Any]) -> bool:
     return config.get("model", {}).get("architecture") in {"gated_coarse_v3", "anchored_gated_v4"}
+
+
+def uses_tri_modal_fusion(config: dict[str, Any]) -> bool:
+    return config.get("model", {}).get("architecture") == "tri_modal_fusion_v1"
 
 
 def load_config(path: str | Path) -> dict[str, Any]:

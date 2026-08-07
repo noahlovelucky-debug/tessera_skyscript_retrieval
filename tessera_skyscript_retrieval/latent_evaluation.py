@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from .config import ensure_parent, uses_text_gated_coarse
+from .config import ensure_parent, uses_text_gated_coarse, uses_tri_modal_fusion
 from .data import load_prepared
 from .features import load_latent_feature_arrays
 from .latent import encode_latent_features, encode_text_gates, encode_text_latents
@@ -16,6 +16,7 @@ from .metrics import (
     paired_recall,
     semantic_retrieval_metrics,
     semantic_topk_metrics,
+    tri_modal_topk,
 )
 from .model import build_latent_model
 
@@ -36,7 +37,28 @@ def _latent_semantic_block(
     text_global = np.asarray(text[unique], dtype=np.float32)
     text_latents = encode_text_latents(model, text_global, device)
     text_gates = encode_text_gates(model, text_global, device)
-    if uses_text_gated_coarse(config):
+    if uses_tri_modal_fusion(config):
+        with torch.inference_mode():
+            fusion_weights = model.encode_fusion_weights(
+                torch.from_numpy(text_global).to(device)
+            ).cpu().numpy()
+            local_logit_ratio = float(
+                (model.fine_logit_scale.exp() / model.logit_scale.exp()).cpu()
+            )
+        ranked_indices = tri_modal_topk(
+            text_global,
+            text_latents,
+            fusion_weights,
+            tessera,
+            highres_global,
+            highres_latents,
+            max(k_values),
+            device,
+            query_batch_size=int(config["evaluation"].get("gated_query_batch_size", 16)),
+            candidate_chunk_size=int(config["evaluation"].get("gated_candidate_chunk_size", 8192)),
+            local_logit_ratio=local_logit_ratio,
+        )
+    elif uses_text_gated_coarse(config):
         ranked_indices = gated_coarse_topk(
             text_global,
             text_latents,
@@ -74,7 +96,7 @@ def _latent_semantic_block(
         "text_to_highres": semantic_retrieval_metrics(
             text_global, unique, highres_global, labels, k_values
         ),
-        "text_to_highres_gated" if uses_text_gated_coarse(config) else "text_to_highres_fine": semantic_topk_metrics(
+        "text_to_tri_modal_fused" if uses_tri_modal_fusion(config) else "text_to_highres_gated" if uses_text_gated_coarse(config) else "text_to_highres_fine": semantic_topk_metrics(
             ranked_indices, unique, labels, k_values
         ),
         "text_to_tessera": semantic_retrieval_metrics(
@@ -123,6 +145,12 @@ def evaluate_latent(
         },
         "retrieval_pipeline": (
             {
+                "full_token_scan": True,
+                "score": "text-gated Sentinel global + high-resolution global + high-resolution MaxSim",
+                "weights": "3-way text MLP softmax",
+            }
+            if uses_tri_modal_fusion(config)
+            else {
                 "full_token_scan": True,
                 "global_weight": "text_mlp_gate",
                 "local_weight": "1 - text_mlp_gate",

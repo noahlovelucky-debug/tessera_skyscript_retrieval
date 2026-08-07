@@ -257,6 +257,13 @@ class LatentRetrievalModel(nn.Module):
         temperature = float(model_cfg["temperature"])
         self.logit_scale = nn.Parameter(torch.tensor(math.log(1.0 / temperature)))
         self.fine_logit_scale = nn.Parameter(torch.tensor(math.log(1.0 / temperature)))
+        self.fusion_gate = nn.Sequential(
+            nn.LayerNorm(int(model_cfg["common_dim"])),
+            nn.Linear(int(model_cfg["common_dim"]), int(model_cfg.get("fusion_gate_hidden_dim", 512))),
+            nn.GELU(),
+            nn.Linear(int(model_cfg.get("fusion_gate_hidden_dim", 512)), 3),
+        )
+        self.initialize_fusion_gate()
 
     def encode_tessera(self, descriptors: torch.Tensor) -> torch.Tensor:
         return self.tessera_adapter(descriptors)
@@ -273,6 +280,36 @@ class LatentRetrievalModel(nn.Module):
 
     def encode_text_gate(self, text_global: torch.Tensor) -> torch.Tensor:
         return self.highres_adapter.encode_gate(text_global)
+
+    def encode_fusion_weights(self, text_global: torch.Tensor) -> torch.Tensor:
+        """Text-conditioned weights for Sentinel global, high-res global, and local tokens."""
+        return torch.softmax(self.fusion_gate(text_global.float()), dim=-1)
+
+    def initialize_fusion_gate(self) -> None:
+        """Start a new fusion head from an unbiased three-way mixture."""
+        final = self.fusion_gate[-1]
+        nn.init.zeros_(final.weight)
+        nn.init.zeros_(final.bias)
+
+    def forward(
+        self,
+        descriptors: torch.Tensor,
+        region_tokens: torch.Tensor,
+        teacher_global: torch.Tensor,
+        text_global: torch.Tensor,
+    ) -> dict[str, torch.Tensor]:
+        """DDP-safe joint encoding path used by tri-modal adapter training."""
+        highres_global, highres_latents = self.encode_highres(
+            region_tokens, teacher_global
+        )
+        return {
+            "tessera": self.encode_tessera(descriptors),
+            "highres_global": highres_global,
+            "highres_latents": highres_latents,
+            "text_latent": self.encode_text_latent(text_global),
+            "text_gate": self.encode_text_gate(text_global),
+            "fusion_weights": self.encode_fusion_weights(text_global),
+        }
 
     def clamp_temperature(self) -> None:
         with torch.no_grad():
