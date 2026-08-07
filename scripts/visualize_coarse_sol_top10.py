@@ -56,9 +56,12 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--sol-csv", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--query", help="Select one query when the CSV contains multiple runs")
     parser.add_argument("--title", default="Caption-OOV query: container ship")
     args = parser.parse_args()
     frame = pd.read_csv(args.sol_csv)
+    if args.query:
+        frame = frame[frame["query"].eq(args.query)].copy()
     if frame["query"].nunique() != 1 or len(frame) != 100:
         raise ValueError("expected one query with exactly 100 Sol-reranked candidates")
     if "terra_visible_evidence" not in frame or "relevant" not in frame:

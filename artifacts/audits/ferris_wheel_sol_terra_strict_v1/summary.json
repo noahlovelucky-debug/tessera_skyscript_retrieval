@@ -1,0 +1,58 @@
+{
+  "sol_model": "gpt-5.6-sol",
+  "terra_model": "gpt-5.6-terra",
+  "candidate_source": "/data/code/tessera_skyscript_retrieval/artifacts/audits/skatepark_ferris_gated_candidates_v1/candidates_pending_judgment.csv",
+  "stage1": "Sol assigns 0-4 relevance and confidence to every image in batches.",
+  "stage2": "Sol globally orders the stage-1 Top-30; remaining candidates retain stage-1 order.",
+  "strict_definition": "A Ferris wheel: a large circular passenger wheel with a hub and radial spokes, visibly distinct from roundabouts, circular tanks, stadiums, ordinary playground equipment, plazas, roads, and decorative circles. Only the actual Ferris wheel is relevant.",
+  "per_query": {
+    "ferris wheel": {
+      "coarse_order": {
+        "relevant_in_pool": 3.0,
+        "precision_at_10": 0.0,
+        "pool_ndcg_at_10": 0.0,
+        "precision_at_25": 0.04,
+        "pool_ndcg_at_25": 0.10858087310103355,
+        "precision_at_50": 0.04,
+        "pool_ndcg_at_50": 0.20421755316941395,
+        "precision_at_100": 0.03,
+        "pool_ndcg_at_100": 0.27979243849190377
+      },
+      "sol_rerank": {
+        "relevant_in_pool": 3.0,
+        "precision_at_10": 0.1,
+        "pool_ndcg_at_10": 0.46927872602275644,
+        "precision_at_25": 0.04,
+        "pool_ndcg_at_25": 0.46927872602275644,
+        "precision_at_50": 0.02,
+        "pool_ndcg_at_50": 0.46927872602275644,
+        "precision_at_100": 0.03,
+        "pool_ndcg_at_100": 0.6110159887060621
+      }
+    }
+  },
+  "mean": {
+    "coarse_order": {
+      "relevant_in_pool": 3.0,
+      "precision_at_10": 0.0,
+      "pool_ndcg_at_10": 0.0,
+      "precision_at_25": 0.04,
+      "pool_ndcg_at_25": 0.10858087310103355,
+      "precision_at_50": 0.04,
+      "pool_ndcg_at_50": 0.20421755316941395,
+      "precision_at_100": 0.03,
+      "pool_ndcg_at_100": 0.27979243849190377
+    },
+    "sol_rerank": {
+      "relevant_in_pool": 3.0,
+      "precision_at_10": 0.1,
+      "pool_ndcg_at_10": 0.46927872602275644,
+      "precision_at_25": 0.04,
+      "pool_ndcg_at_25": 0.46927872602275644,
+      "precision_at_50": 0.02,
+      "pool_ndcg_at_50": 0.46927872602275644,
+      "precision_at_100": 0.03,
+      "pool_ndcg_at_100": 0.6110159887060621
+    }
+  }
+}

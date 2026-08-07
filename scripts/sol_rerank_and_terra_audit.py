@@ -29,6 +29,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stage2-top-n", type=int, default=30)
     parser.add_argument("--terra-batch-size", type=int, default=10)
     parser.add_argument("--image-size", type=int, default=768)
+    parser.add_argument(
+        "--strict-definition",
+        help="Require an exact visible object match; context and related infrastructure are negative.",
+    )
     return parser.parse_args()
 
 
@@ -92,9 +96,17 @@ def sol_stage1(
     query: str, rows: pd.DataFrame, api_key: str, args: argparse.Namespace
 ) -> tuple[list[dict], dict]:
     ranks = rows["coarse_rank"].astype(int).tolist()
+    strict = (
+        f" Strict-match definition: {args.strict_definition} Do not score related context, "
+        "infrastructure, or visually similar but different objects as a match."
+        if args.strict_definition
+        else ""
+    )
     prompt = (
         f"You are reranking aerial images for the query {query!r}. Judge only visible pixels; "
-        "do not infer hidden metadata or titles. Return JSON only as "
+        "do not infer hidden metadata or titles."
+        + strict
+        + " Return JSON only as "
         '{"scores":[{"rank":1,"relevance":0,"confidence":0.0,"visible_evidence":"..."}]}. '
         f"Return exactly these ranks: {json.dumps(ranks)}. relevance is an integer: 4=direct, "
         "unambiguous match; 3=clear match; 2=plausible but weak or mixed; 1=tangential; 0=absent."
@@ -112,9 +124,12 @@ def sol_stage2(
     query: str, rows: pd.DataFrame, api_key: str, args: argparse.Namespace
 ) -> tuple[list[int], dict]:
     ranks = rows["coarse_rank"].astype(int).tolist()
+    strict = f" Apply this strict-match definition: {args.strict_definition}" if args.strict_definition else ""
     prompt = (
         f"You are doing the final aerial-image rerank for query {query!r}. Rank every candidate "
         "from most to least visually relevant based only on pixels. Do not use hidden metadata or titles. "
+        + strict
+        + " "
         'Return JSON only as {"ordered_ranks":[1,2,...]}. Include every provided rank exactly once: '
         + json.dumps(ranks)
     )
@@ -131,10 +146,18 @@ def terra_judge(
     query: str, rows: pd.DataFrame, api_key: str, args: argparse.Namespace
 ) -> tuple[list[dict], dict]:
     ranks = rows["rank"].astype(int).tolist()
+    strict = (
+        f" Strict-match definition: {args.strict_definition} Only mark relevant when this exact "
+        "object is visibly present; related context, infrastructure, and similar objects are negative."
+        if args.strict_definition
+        else ""
+    )
     prompt = (
         f"You are independently auditing aerial-image retrieval for the query {query!r}. "
         "Judge every image solely from visible pixels. Never infer metadata, titles, prior rankings, "
         "or another model's score. An image is relevant when the object or land-use is visibly present. "
+        + strict
+        + " "
         'Return JSON only as {"judgments":[{"rank":1,"relevant":true,"confidence":0.0,'
         '"visible_evidence":"..."}]}. Include exactly these ranks: '
         + json.dumps(ranks)
@@ -243,6 +266,7 @@ def main() -> None:
         "candidate_source": str(Path(args.candidates).resolve()),
         "stage1": "Sol assigns 0-4 relevance and confidence to every image in batches.",
         "stage2": f"Sol globally orders the stage-1 Top-{args.stage2_top_n}; remaining candidates retain stage-1 order.",
+        "strict_definition": args.strict_definition,
         "per_query": summaries,
         "mean": {
             method: {

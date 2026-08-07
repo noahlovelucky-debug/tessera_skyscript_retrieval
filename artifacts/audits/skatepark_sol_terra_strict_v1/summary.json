@@ -1,0 +1,58 @@
+{
+  "sol_model": "gpt-5.6-sol",
+  "terra_model": "gpt-5.6-terra",
+  "candidate_source": "/data/code/tessera_skyscript_retrieval/artifacts/audits/skatepark_ferris_gated_candidates_v1/candidates_pending_judgment.csv",
+  "stage1": "Sol assigns 0-4 relevance and confidence to every image in batches.",
+  "stage2": "Sol globally orders the stage-1 Top-30; remaining candidates retain stage-1 order.",
+  "strict_definition": "A purpose-built skatepark with visibly identifiable skate bowls, half-pipes, ramps, rails, or a continuous skate layout. Ordinary playgrounds, sports courts, plazas, parking lots, roads, and generic recreational land are not relevant.",
+  "per_query": {
+    "skatepark": {
+      "coarse_order": {
+        "relevant_in_pool": 3.0,
+        "precision_at_10": 0.0,
+        "pool_ndcg_at_10": 0.0,
+        "precision_at_25": 0.04,
+        "pool_ndcg_at_25": 0.09983719697789138,
+        "precision_at_50": 0.02,
+        "pool_ndcg_at_50": 0.09983719697789138,
+        "precision_at_100": 0.03,
+        "pool_ndcg_at_100": 0.2522806349007059
+      },
+      "sol_rerank": {
+        "relevant_in_pool": 3.0,
+        "precision_at_10": 0.1,
+        "pool_ndcg_at_10": 0.20210734650054757,
+        "precision_at_25": 0.08,
+        "pool_ndcg_at_25": 0.3289243633329411,
+        "precision_at_50": 0.04,
+        "pool_ndcg_at_50": 0.3289243633329411,
+        "precision_at_100": 0.03,
+        "pool_ndcg_at_100": 0.4044992486554309
+      }
+    }
+  },
+  "mean": {
+    "coarse_order": {
+      "relevant_in_pool": 3.0,
+      "precision_at_10": 0.0,
+      "pool_ndcg_at_10": 0.0,
+      "precision_at_25": 0.04,
+      "pool_ndcg_at_25": 0.09983719697789138,
+      "precision_at_50": 0.02,
+      "pool_ndcg_at_50": 0.09983719697789138,
+      "precision_at_100": 0.03,
+      "pool_ndcg_at_100": 0.2522806349007059
+    },
+    "sol_rerank": {
+      "relevant_in_pool": 3.0,
+      "precision_at_10": 0.1,
+      "pool_ndcg_at_10": 0.20210734650054757,
+      "precision_at_25": 0.08,
+      "pool_ndcg_at_25": 0.3289243633329411,
+      "precision_at_50": 0.04,
+      "pool_ndcg_at_50": 0.3289243633329411,
+      "precision_at_100": 0.03,
+      "pool_ndcg_at_100": 0.4044992486554309
+    }
+  }
+}
