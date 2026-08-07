@@ -1,0 +1,31 @@
+{
+  "sol_model": "gpt-5.6-sol",
+  "terra_model": "gpt-5.6-terra",
+  "candidate_source": "/data/code/tessera_skyscript_retrieval/artifacts/audits/luna_rerank_12classes_old_coarse_top100_v1/candidates_luna_judged.csv",
+  "stage1": "Sol assigns 0-4 relevance and confidence to every image in batches.",
+  "stage2": "Sol globally orders the stage-1 Top-30; remaining candidates retain stage-1 order.",
+  "per_query": {
+    "river": {
+      "relevant_in_pool": 72.0,
+      "precision_at_10": 1.0,
+      "pool_ndcg_at_10": 1.0,
+      "precision_at_25": 1.0,
+      "pool_ndcg_at_25": 1.0,
+      "precision_at_50": 0.88,
+      "pool_ndcg_at_50": 0.9169074884680272,
+      "precision_at_100": 0.72,
+      "pool_ndcg_at_100": 0.9894186502766513
+    }
+  },
+  "mean": {
+    "relevant_in_pool": 72.0,
+    "precision_at_10": 1.0,
+    "pool_ndcg_at_10": 1.0,
+    "precision_at_25": 1.0,
+    "pool_ndcg_at_25": 1.0,
+    "precision_at_50": 0.88,
+    "pool_ndcg_at_50": 0.9169074884680272,
+    "precision_at_100": 0.72,
+    "pool_ndcg_at_100": 0.9894186502766513
+  }
+}

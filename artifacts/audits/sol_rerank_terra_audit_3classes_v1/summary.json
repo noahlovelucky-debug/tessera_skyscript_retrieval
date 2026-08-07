@@ -1,0 +1,105 @@
+{
+  "sol_model": "gpt-5.6-sol",
+  "terra_model": "gpt-5.6-terra",
+  "candidate_source": "/data/code/tessera_skyscript_retrieval/artifacts/audits/luna_rerank_12classes_old_coarse_top100_v1/candidates_luna_judged.csv",
+  "stage1": "Sol assigns 0-4 relevance and confidence to every image in batches.",
+  "stage2": "Sol globally orders the stage-1 Top-30; remaining candidates retain stage-1 order.",
+  "per_query": {
+    "school": {
+      "coarse_order": {
+        "relevant_in_pool": 64.0,
+        "precision_at_10": 0.8,
+        "pool_ndcg_at_10": 0.8643145546088339,
+        "precision_at_25": 0.76,
+        "pool_ndcg_at_25": 0.8026370735375151,
+        "precision_at_50": 0.7,
+        "pool_ndcg_at_50": 0.7440721149969688,
+        "precision_at_100": 0.64,
+        "pool_ndcg_at_100": 0.9318997709628819
+      },
+      "sol_rerank": {
+        "relevant_in_pool": 64.0,
+        "precision_at_10": 1.0,
+        "pool_ndcg_at_10": 1.0,
+        "precision_at_25": 1.0,
+        "pool_ndcg_at_25": 1.0,
+        "precision_at_50": 0.92,
+        "pool_ndcg_at_50": 0.942587376432083,
+        "precision_at_100": 0.64,
+        "pool_ndcg_at_100": 0.9892289506287273
+      }
+    },
+    "farmland": {
+      "coarse_order": {
+        "relevant_in_pool": 64.0,
+        "precision_at_10": 0.5,
+        "pool_ndcg_at_10": 0.5672274908036509,
+        "precision_at_25": 0.64,
+        "pool_ndcg_at_25": 0.6378412801277422,
+        "precision_at_50": 0.64,
+        "pool_ndcg_at_50": 0.6361701831591621,
+        "precision_at_100": 0.64,
+        "pool_ndcg_at_100": 0.8733399049710158
+      },
+      "sol_rerank": {
+        "relevant_in_pool": 64.0,
+        "precision_at_10": 1.0,
+        "pool_ndcg_at_10": 1.0,
+        "precision_at_25": 1.0,
+        "pool_ndcg_at_25": 1.0,
+        "precision_at_50": 0.96,
+        "pool_ndcg_at_50": 0.9713946295820095,
+        "precision_at_100": 0.64,
+        "pool_ndcg_at_100": 0.9924481483744095
+      }
+    },
+    "hospital": {
+      "coarse_order": {
+        "relevant_in_pool": 67.0,
+        "precision_at_10": 0.9,
+        "pool_ndcg_at_10": 0.88995411685096,
+        "precision_at_25": 0.88,
+        "pool_ndcg_at_25": 0.8782782829579104,
+        "precision_at_50": 0.78,
+        "pool_ndcg_at_50": 0.8016468367498066,
+        "precision_at_100": 0.67,
+        "pool_ndcg_at_100": 0.942695176533809
+      },
+      "sol_rerank": {
+        "relevant_in_pool": 67.0,
+        "precision_at_10": 1.0,
+        "pool_ndcg_at_10": 1.0,
+        "precision_at_25": 1.0,
+        "pool_ndcg_at_25": 1.0,
+        "precision_at_50": 0.92,
+        "pool_ndcg_at_50": 0.9439406374072074,
+        "precision_at_100": 0.67,
+        "pool_ndcg_at_100": 0.9922231891260451
+      }
+    }
+  },
+  "mean": {
+    "coarse_order": {
+      "relevant_in_pool": 65.0,
+      "precision_at_10": 0.7333333333333334,
+      "pool_ndcg_at_10": 0.7738320540878149,
+      "precision_at_25": 0.7599999999999999,
+      "pool_ndcg_at_25": 0.7729188788743891,
+      "precision_at_50": 0.7066666666666667,
+      "pool_ndcg_at_50": 0.7272963783019791,
+      "precision_at_100": 0.65,
+      "pool_ndcg_at_100": 0.9159782841559022
+    },
+    "sol_rerank": {
+      "relevant_in_pool": 65.0,
+      "precision_at_10": 1.0,
+      "pool_ndcg_at_10": 1.0,
+      "precision_at_25": 1.0,
+      "pool_ndcg_at_25": 1.0,
+      "precision_at_50": 0.9333333333333332,
+      "pool_ndcg_at_50": 0.9526408811404333,
+      "precision_at_100": 0.65,
+      "pool_ndcg_at_100": 0.9913000960430606
+    }
+  }
+}
