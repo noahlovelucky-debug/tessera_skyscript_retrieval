@@ -1,0 +1,718 @@
+{
+  "model": "gpt-5.6-luna",
+  "retrieval_checkpoints": {
+    "gated_highres": "/data/code/tessera_skyscript_retrieval/artifacts/runs/anchored_gated_v4/best.pt"
+  },
+  "candidate_split": "test",
+  "candidate_count": 39344,
+  "top_k": 10,
+  "systems": {
+    "gated_highres": {
+      "mean_luna_visual_precision_at_k": 0.8470000000000002,
+      "mean_luna_visual_hit_at_k": 1.0,
+      "mean_luna_discounted_relevance_at_k": 0.8490727062328781,
+      "queries": {
+        "Abandoned railway": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.3227266260473092,
+          "luna_relevant_count": 4,
+          "gate_global_weight": 0.3591214716434479
+        },
+        "Alley classified as service road": {
+          "luna_visual_precision_at_k": 0.3,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.25787537406449274,
+          "luna_relevant_count": 3,
+          "gate_global_weight": 0.3643864095211029
+        },
+        "Baseball pitch for leisure and sports activities": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3519311249256134
+        },
+        "Cemetery": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3678993880748749
+        },
+        "Commercial building": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36726194620132446
+        },
+        "Farm auxiliary building": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3564487397670746
+        },
+        "Farm building": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36666378378868103
+        },
+        "Golf cartpath that is also road path": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3590698838233948
+        },
+        "Greenhouse": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3658713400363922
+        },
+        "Healthcare facility identified as hospital": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36032015085220337
+        },
+        "Hospital building": {
+          "luna_visual_precision_at_k": 0.6,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.6816808362189439,
+          "luna_relevant_count": 6,
+          "gate_global_weight": 0.3689795136451721
+        },
+        "Islet": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.37145817279815674
+        },
+        "Marked road crossing": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3755348324775696
+        },
+        "Parking space": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.37862518429756165
+        },
+        "Path designated for golf carts": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35767143964767456
+        },
+        "Playground area for leisure activities on the land": {
+          "luna_visual_precision_at_k": 0.6,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.6243301345792677,
+          "luna_relevant_count": 6,
+          "gate_global_weight": 0.353753000497818
+        },
+        "Playground area for leisure land": {
+          "luna_visual_precision_at_k": 0.7,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.7315449642824575,
+          "luna_relevant_count": 7,
+          "gate_global_weight": 0.35655367374420166
+        },
+        "Power pole": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36365416646003723
+        },
+        "Pylon for aerialway": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3560772240161896
+        },
+        "Residential road": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3777996301651001
+        },
+        "Road serving as parking aisle": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.37098103761672974
+        },
+        "Road with traffic signals": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.37642040848731995
+        },
+        "Rough area on grassy golf course": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3535919189453125
+        },
+        "Secondary road with asphalt surface": {
+          "luna_visual_precision_at_k": 0.1,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.07336392209936006,
+          "luna_relevant_count": 1,
+          "gate_global_weight": 0.3726891279220581
+        },
+        "Silo": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3653733432292938
+        },
+        "Soccer pitch designated for leisure and sports activities": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3510145843029022
+        },
+        "Soccer pitch for leisureland activities": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8364586133797037,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.35151466727256775
+        },
+        "Storage tank with man-made structure": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35115984082221985
+        },
+        "Supermarket": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36867305636405945
+        },
+        "University building": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.88995411685096,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.3676797151565552
+        },
+        "View of taxiway at the airport": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3632301986217499
+        },
+        "Warehouse": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36968547105789185
+        },
+        "Zebra crossing on the road": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3688412010669708
+        },
+        "Asphalt road classified as primary highway, featuring roundabout at junction": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3543380796909332
+        },
+        "Building with storage tank": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3561663031578064
+        },
+        "Building with tile roof": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9216017310213247,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.36563238501548767
+        },
+        "Building with tiled roof": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9148568823583791,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.3647341728210449
+        },
+        "Bunker on golf course": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35742661356925964
+        },
+        "Bus stop equipped with public transport stop position": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3648033142089844
+        },
+        "Catenary mast for power lines": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.88995411685096,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.3462507426738739
+        },
+        "Crossing with traffic signals": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3694736063480377
+        },
+        "Cycleway": {
+          "luna_visual_precision_at_k": 0.5,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.5072380780124418,
+          "luna_relevant_count": 5,
+          "gate_global_weight": 0.3691592216491699
+        },
+        "Designated area for dogs to play, dog park": {
+          "luna_visual_precision_at_k": 0.2,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.15457433957839828,
+          "luna_relevant_count": 2,
+          "gate_global_weight": 0.3562893867492676
+        },
+        "Detached building with gabled roof": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35777440667152405
+        },
+        "Golf tee on grassy land": {
+          "luna_visual_precision_at_k": 0.5,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.6371523797895857,
+          "luna_relevant_count": 5,
+          "gate_global_weight": 0.35686424374580383
+        },
+        "Grass area designated as golf tee": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.4341754806679219,
+          "luna_relevant_count": 4,
+          "gate_global_weight": 0.3584611713886261
+        },
+        "Lock gate along waterway": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8701249883466594,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.35824525356292725
+        },
+        "Marsh wetland": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36037197709083557
+        },
+        "Miniature golf leisure land": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3587658405303955
+        },
+        "Mixed leaf woodland": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35977837443351746
+        },
+        "Poultry house": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9052116356304495,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.3596043884754181
+        },
+        "Public building": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9337457765456111,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.36857518553733826
+        },
+        "Residential area consisting of single-family homes": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3527728319168091
+        },
+        "Residential road with asphalt surface": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3697373569011688
+        },
+        "Rest area on the road": {
+          "luna_visual_precision_at_k": 0.6,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.6306637463657284,
+          "luna_relevant_count": 6,
+          "gate_global_weight": 0.3753408193588257
+        },
+        "Road crossing with traffic signals": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.370677649974823
+        },
+        "Roller coaster, exhilarating and thrilling attraction": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36162030696868896
+        },
+        "Secondary road around roundabout": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9363792118010483,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.36471331119537354
+        },
+        "Solar power generator using photovoltaic panels": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3534581661224365
+        },
+        "Storage tank created as man-made structure": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35298123955726624
+        },
+        "Trunk link highway with asphalt surface": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.77990823370192,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.36125487089157104
+        },
+        "Unmarked crossing on footway": {
+          "luna_visual_precision_at_k": 0.5,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.37960256558331523,
+          "luna_relevant_count": 5,
+          "gate_global_weight": 0.3634127676486969
+        },
+        "View of motorway": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.36992311477661133
+        },
+        "View of wastewater plant": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3498836159706116
+        },
+        "Wind generator using wind turbines of horizontal axis": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35126644372940063
+        },
+        "Woodland with needle-leaved trees": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3574368953704834
+        },
+        "Beautiful meadow": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9363792118010483,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.3653157651424408
+        },
+        "Bridge with electrified railway tracks featuring contact line": {
+          "luna_visual_precision_at_k": 0.5,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.44821456061271275,
+          "luna_relevant_count": 5,
+          "gate_global_weight": 0.35105210542678833
+        },
+        "Clinic building offering healthcare services": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.535254316775064,
+          "luna_relevant_count": 4,
+          "gate_global_weight": 0.36279863119125366
+        },
+        "Concrete bench": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8572048559638626,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.3691830635070801
+        },
+        "Ditch in the surroundings": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.88995411685096,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.36480391025543213
+        },
+        "Driving range for golf on grass": {
+          "luna_visual_precision_at_k": 0.2,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.133052010135729,
+          "luna_relevant_count": 2,
+          "gate_global_weight": 0.3551238775253296
+        },
+        "Expressway with asphalt surface classified as trunk highway": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3582034111022949
+        },
+        "Fenced power substation at the transmission level": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.34648680686950684
+        },
+        "Government office": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8357804136936722,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.36731022596359253
+        },
+        "Grassy area designated as driving range for golf": {
+          "luna_visual_precision_at_k": 0.7,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.7655934900767002,
+          "luna_relevant_count": 7,
+          "gate_global_weight": 0.3544050455093384
+        },
+        "Grassy area used as driving range for golf": {
+          "luna_visual_precision_at_k": 0.6,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.4896484487323553,
+          "luna_relevant_count": 6,
+          "gate_global_weight": 0.3523607552051544
+        },
+        "Grassy golf fairway": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3597389757633209
+        },
+        "Historic wayside cross": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3622949719429016
+        },
+        "Hut": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.37018096446990967
+        },
+        "Image of wastewater": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35906654596328735
+        },
+        "Junction on the railway": {
+          "luna_visual_precision_at_k": 0.2,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.15457433957839828,
+          "luna_relevant_count": 2,
+          "gate_global_weight": 0.36640340089797974
+        },
+        "Marked crossing with zebra markings on the road": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8205228949141828,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.3549385070800781
+        },
+        "Miniature golf course": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.8572048559638626,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.3639046549797058
+        },
+        "Narrow-gauge railway track with 1 electrified contact line": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.29802729812225165,
+          "luna_relevant_count": 4,
+          "gate_global_weight": 0.3480997681617737
+        },
+        "Path with excellent trail visibility": {
+          "luna_visual_precision_at_k": 0.9,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9337457765456111,
+          "luna_relevant_count": 9,
+          "gate_global_weight": 0.36047184467315674
+        },
+        "Paved residential road": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3715362846851349
+        },
+        "Railway line on embankment": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.357803076505661
+        },
+        "Residential road with asphalt surface, without sidewalks": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3592701852321625
+        },
+        "Retail building housing supermarket": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35184285044670105
+        },
+        "Scrap yard located in industrial area": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35030949115753174
+        },
+        "Secondary road leading to roundabout": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3638263940811157
+        },
+        "Secondary road with frontage road alongside": {
+          "luna_visual_precision_at_k": 0.6,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.6267310462031456,
+          "luna_relevant_count": 6,
+          "gate_global_weight": 0.3611329197883606
+        },
+        "Secondary road with separate sidewalks": {
+          "luna_visual_precision_at_k": 0.8,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.7162874455029682,
+          "luna_relevant_count": 8,
+          "gate_global_weight": 0.3642297685146332
+        },
+        "Storage rental shop located in building": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.5077181160122075,
+          "luna_relevant_count": 4,
+          "gate_global_weight": 0.3517148494720459
+        },
+        "Unclassified road with bridge": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.4631896595828493,
+          "luna_relevant_count": 4,
+          "gate_global_weight": 0.36325815320014954
+        },
+        "Uncontrolled crossing with central island on the road": {
+          "luna_visual_precision_at_k": 0.4,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.3250640124440019,
+          "luna_relevant_count": 4,
+          "gate_global_weight": 0.3654922544956207
+        },
+        "Wastewater plant": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3532952666282654
+        },
+        "Wind generator powered by horizontal-axis wind turbine": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.3486790359020233
+        },
+        "Wind power generator with wind turbines": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 10,
+          "gate_global_weight": 0.35175850987434387
+        }
+      }
+    }
+  }
+}

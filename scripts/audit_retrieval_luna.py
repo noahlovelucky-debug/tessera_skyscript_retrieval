@@ -7,8 +7,9 @@ import base64
 import gc
 import json
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 import numpy as np
@@ -156,44 +157,6 @@ def image_payload(path: str, max_size: int) -> str:
     return "data:image/jpeg;base64," + base64.b64encode(stream.getvalue()).decode("ascii")
 
 
-def judge_candidate(
-    query: str,
-    rank: int,
-    image_path: str,
-    api_key: str,
-    base_url: str,
-    model: str,
-    image_size: int,
-) -> tuple[dict, dict]:
-    prompt = (
-        f"You are auditing aerial-image retrieval for the query: {query!r}. "
-        "Judge this candidate solely from the image pixels. The candidate is relevant when the "
-        "queried object or land-use is visibly present, including visually clear subtypes. "
-        "Do not rely on or infer hidden metadata, titles, or ranking. Return JSON only as "
-        f'{{"rank":{rank},"relevant":true,"confidence":0.0,"visible_evidence":"..."}}.'
-    )
-    payload = {
-        "model": model,
-        "input": [{"role": "user", "content": [
-            {"type": "input_text", "text": prompt},
-            {"type": "input_image", "image_url": image_payload(image_path, image_size)},
-        ]}],
-        "max_output_tokens": 300,
-    }
-    request = Request(
-        f"{base_url.rstrip('/')}/responses",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-        method="POST",
-    )
-    with urlopen(request, timeout=180) as stream:
-        response = json.loads(stream.read().decode("utf-8"))
-    parsed = json.loads(extract_text(response))
-    if int(parsed.get("rank", -1)) != rank:
-        raise ValueError(f"Luna returned invalid rank for query={query!r}: {parsed}")
-    return parsed, response
-
-
 def judge_query(
     query: str,
     rows: pd.DataFrame,
@@ -203,27 +166,62 @@ def judge_query(
     image_size: int,
     workers: int,
 ) -> tuple[list[dict], list[dict]]:
-    judgments: list[dict] = []
-    raw_responses: list[dict] = []
-    with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {
-            executor.submit(
-                judge_candidate,
-                query,
-                int(row.rank),
-                str(row.image_path),
-                api_key,
-                base_url,
-                model,
-                image_size,
-            ): int(row.rank)
-            for row in rows.itertuples(index=False)
-        }
-        for future in as_completed(futures):
-            judgment, raw = future.result()
-            judgments.append(judgment)
-            raw_responses.append(raw)
-    return judgments, raw_responses
+    del workers  # Top-10 is sent in one request to preserve a consistent judgment context.
+    ranks = [int(row.rank) for row in rows.sort_values("rank").itertuples(index=False)]
+    prompt = (
+        f"You are auditing aerial-image retrieval for the query: {query!r}. "
+        "Judge each of the ten numbered candidate images solely from its pixels. An image is "
+        "relevant when the queried object or land-use is visibly present, including visually "
+        "clear subtypes. Do not rely on or infer hidden metadata, titles, or ranking. Return "
+        "JSON only as {\"judgments\":[{\"rank\":1,\"relevant\":true,\"confidence\":0.0,"
+        "\"visible_evidence\":\"...\"}, ...]}. Include exactly these ranks: "
+        + json.dumps(ranks)
+    )
+    content = [{"type": "input_text", "text": prompt}]
+    for row in rows.sort_values("rank").itertuples(index=False):
+        content.append(
+            {
+                "type": "input_text",
+                "text": f"Candidate rank {int(row.rank)}:",
+            }
+        )
+        content.append(
+            {
+                "type": "input_image",
+                "image_url": image_payload(str(row.image_path), image_size),
+            }
+        )
+    payload = {
+        "model": model,
+        "input": [{"role": "user", "content": content}],
+        "max_output_tokens": 1800,
+    }
+    request = Request(
+        f"{base_url.rstrip('/')}/responses",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    error = None
+    for attempt in range(3):
+        try:
+            with urlopen(request, timeout=300) as stream:
+                response = json.loads(stream.read().decode("utf-8"))
+            parsed = json.loads(extract_text(response))
+            judgments = parsed.get("judgments") if isinstance(parsed, dict) else None
+            if not isinstance(judgments, list):
+                raise ValueError(f"Luna returned no judgments for query={query!r}")
+            returned_ranks = [int(item.get("rank", -1)) for item in judgments]
+            if sorted(returned_ranks) != ranks or len(judgments) != len(ranks):
+                raise ValueError(
+                    f"Luna returned invalid ranks for query={query!r}: {returned_ranks}"
+                )
+            return judgments, [response]
+        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError, ValueError) as exc:
+            error = exc
+            if attempt < 2:
+                time.sleep(2 ** attempt)
+    raise RuntimeError(f"Luna audit failed for query={query!r}: {error}")
 
 
 def main() -> None:
@@ -371,6 +369,7 @@ def main() -> None:
                     }
                 )
     candidates = pd.DataFrame(candidate_rows)
+    candidates.to_csv(output_dir / "candidates_pending_judgment.csv", index=False)
     judgments: list[dict] = []
     raw_responses = {}
     for system, query in candidates[["system", "query"]].drop_duplicates().itertuples(index=False):
@@ -380,6 +379,13 @@ def main() -> None:
         )
         raw_responses[f"{system}:{query}"] = raw
         judgments.extend({"system": system, "query": query, **item} for item in result)
+        pd.DataFrame(judgments).to_csv(
+            output_dir / "judgments_progress.csv", index=False
+        )
+        (output_dir / "luna_raw_responses_progress.json").write_text(
+            json.dumps(raw_responses, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
         print(f"Luna judged {system}:{query}", flush=True)
     judgment_frame = pd.DataFrame(judgments)
     audited = candidates.merge(judgment_frame, on=["system", "query", "rank"], validate="one_to_one")
