@@ -2,15 +2,27 @@
 
 ## Scope
 
-This table reuses completed `river` Top-100 audits. `pool-nDCG` is normalized only by positives judged inside the returned Top-100, not all corpus positives. It is therefore a fixed-candidate-pool ordering metric, not full-corpus nDCG or recall.
+This table reuses completed `river` Top-100 audits over the full 39,344-image test split. `pool-nDCG` is normalized only by positives judged inside the returned Top-100, not all corpus positives. It is therefore a fixed-candidate-pool ordering metric, not full-corpus nDCG or recall.
+
+## Metrics
 
 | System | Reranker | Visual judge | P@10 | P@25 | P@50 | P@100 | pool-nDCG@100 |
 |---|---|---|---:|---:|---:|---:|---:|
 | High-resolution gated coarse retrieval | none | Luna | 0.90 | 0.88 | 0.78 | 0.73 | 0.9601 |
 | High-resolution no-gate retrieval | none | Luna | 0.90 | 0.80 | 0.66 | 0.58 | 0.9383 |
-| High-resolution gated retrieval | local 0.35 global + 0.65 token MaxSim | Luna | 1.00 | 0.80 | 0.78 | 0.73 | 0.9560 |
+| High-resolution gated retrieval | local 0.35 global + 0.65 token MaxSim | Luna | **1.00** | 0.80 | 0.78 | 0.73 | 0.9560 |
 | High-resolution gated retrieval | Luna confidence | Luna | 0.80 | 0.68 | 0.64 | 0.73 | 0.9234 |
-| High-resolution gated retrieval | Sol two-stage Top-30 rerank | Terra | 1.00 | 1.00 | 0.88 | 0.72 | 0.9894 |
+| High-resolution gated retrieval | Sol two-stage Top-30 rerank | Terra | **1.00** | **1.00** | **0.88** | 0.72 | **0.9894** |
+
+## What Changes At Each Stage
+
+| System | Candidate pool | Can improve P@100? | Additional online cost per Top-100 | Practical reading |
+|---|---|---|---:|---|
+| High-resolution gated coarse | Its own gated Top-100 | Yes, through better coarse retrieval | local only | Best coarse candidate coverage in this river comparison. |
+| High-resolution no-gate | Its own fixed-weight Top-100 | Yes, through better coarse retrieval | local only | Weaker Top-100 coverage than the gated coarse model. |
+| Gated + local token rerank | Exactly the gated Top-100 | No | near-zero after candidate features are loaded | Improves the first page, but hurts P@25 and the tail. |
+| Gated + Luna confidence | Exactly the gated Top-100 | No | about $0.057 | Worse here; confidence values from separate 10-image batches are not globally calibrated. |
+| Gated + Sol two-stage rerank | Exactly the gated Top-100 | No | about $0.347 | Strong ordering under Terra, but higher latency/cost. Terra audit is another about $0.150 and is offline only. |
 
 ## Interpretation
 
