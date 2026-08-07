@@ -1,0 +1,25 @@
+{
+  "model": "gpt-5.6-luna",
+  "retrieval_checkpoints": {
+    "gated_highres": "/data/code/tessera_skyscript_retrieval/artifacts/runs/gated_coarse_v3/best.pt"
+  },
+  "candidate_split": "test",
+  "candidate_count": 39344,
+  "top_k": 100,
+  "systems": {
+    "gated_highres": {
+      "mean_luna_visual_precision_at_k": 0.73,
+      "mean_luna_visual_hit_at_k": 1.0,
+      "mean_luna_discounted_relevance_at_k": 0.7682047432469495,
+      "queries": {
+        "river": {
+          "luna_visual_precision_at_k": 0.73,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.7682047432469495,
+          "luna_relevant_count": 73,
+          "gate_global_weight": 0.5627004504203796
+        }
+      }
+    }
+  }
+}

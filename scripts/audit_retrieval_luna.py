@@ -63,6 +63,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--base-url", default="http://ai.spacebus.org.cn/v1")
     parser.add_argument("--image-size", type=int, default=768)
     parser.add_argument("--judge-workers", type=int, default=1)
+    parser.add_argument(
+        "--judge-batch-size",
+        type=int,
+        default=10,
+        help="Number of ranked images submitted to Luna in each request.",
+    )
     return parser.parse_args()
 
 
@@ -166,11 +172,11 @@ def judge_query(
     image_size: int,
     workers: int,
 ) -> tuple[list[dict], list[dict]]:
-    del workers  # Top-10 is sent in one request to preserve a consistent judgment context.
+    del workers  # Each batch is sent in one request for a consistent judgment context.
     ranks = [int(row.rank) for row in rows.sort_values("rank").itertuples(index=False)]
     prompt = (
         f"You are auditing aerial-image retrieval for the query: {query!r}. "
-        "Judge each of the ten numbered candidate images solely from its pixels. An image is "
+        f"Judge each of the {len(ranks)} numbered candidate images solely from its pixels. An image is "
         "relevant when the queried object or land-use is visibly present, including visually "
         "clear subtypes. Do not rely on or infer hidden metadata, titles, or ranking. Return "
         "JSON only as {\"judgments\":[{\"rank\":1,\"relevant\":true,\"confidence\":0.0,"
@@ -374,19 +380,26 @@ def main() -> None:
     raw_responses = {}
     for system, query in candidates[["system", "query"]].drop_duplicates().itertuples(index=False):
         rows = candidates[candidates["system"].eq(system) & candidates["query"].eq(query)].copy()
-        result, raw = judge_query(
-            query, rows, api_key, args.base_url, args.model, args.image_size, args.judge_workers
-        )
-        raw_responses[f"{system}:{query}"] = raw
-        judgments.extend({"system": system, "query": query, **item} for item in result)
-        pd.DataFrame(judgments).to_csv(
-            output_dir / "judgments_progress.csv", index=False
-        )
-        (output_dir / "luna_raw_responses_progress.json").write_text(
-            json.dumps(raw_responses, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-        print(f"Luna judged {system}:{query}", flush=True)
+        for start in range(0, len(rows), args.judge_batch_size):
+            batch = rows.iloc[start : start + args.judge_batch_size]
+            result, raw = judge_query(
+                query, batch, api_key, args.base_url, args.model, args.image_size, args.judge_workers
+            )
+            first_rank = int(batch["rank"].min())
+            last_rank = int(batch["rank"].max())
+            raw_responses[f"{system}:{query}:{first_rank}-{last_rank}"] = raw
+            judgments.extend({"system": system, "query": query, **item} for item in result)
+            pd.DataFrame(judgments).to_csv(
+                output_dir / "judgments_progress.csv", index=False
+            )
+            (output_dir / "luna_raw_responses_progress.json").write_text(
+                json.dumps(raw_responses, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            print(
+                f"Luna judged {system}:{query}: ranks {first_rank}-{last_rank}",
+                flush=True,
+            )
     judgment_frame = pd.DataFrame(judgments)
     audited = candidates.merge(judgment_frame, on=["system", "query", "rank"], validate="one_to_one")
     audited.to_csv(output_dir / "candidates_luna_judged.csv", index=False)
