@@ -1,0 +1,52 @@
+{
+  "query": "river",
+  "candidate_pool": "/data/code/tessera_skyscript_retrieval/artifacts/audits/luna_river_top100_old_gate_v1/candidates_luna_judged.csv",
+  "evaluation": "Luna pixel relevance labels previously collected for the fixed candidate pool",
+  "local_rule": "0.35 global + 0.65 local MaxSim",
+  "methods": {
+    "coarse": {
+      "relevant_in_pool": 73,
+      "precision_at_10": 0.9,
+      "ndcg_at_10": 0.9337457765456111,
+      "precision_at_25": 0.88,
+      "ndcg_at_25": 0.9065297133941952,
+      "precision_at_50": 0.78,
+      "ndcg_at_50": 0.8210923193018552,
+      "precision_at_100": 0.73,
+      "ndcg_at_100": 0.9601153274160174
+    },
+    "local_rerank": {
+      "relevant_in_pool": 73,
+      "precision_at_10": 1.0,
+      "ndcg_at_10": 1.0,
+      "precision_at_25": 0.8,
+      "ndcg_at_25": 0.8535129349184245,
+      "precision_at_50": 0.78,
+      "ndcg_at_50": 0.8181020546279821,
+      "precision_at_100": 0.73,
+      "ndcg_at_100": 0.9560367239234567
+    },
+    "luna_confidence_rerank": {
+      "relevant_in_pool": 73,
+      "precision_at_10": 0.8,
+      "ndcg_at_10": 0.8630152897016883,
+      "precision_at_25": 0.68,
+      "ndcg_at_25": 0.7409010578611961,
+      "precision_at_50": 0.64,
+      "ndcg_at_50": 0.690026367537353,
+      "precision_at_100": 0.73,
+      "ndcg_at_100": 0.9233804780694661
+    },
+    "luna_label_oracle_upper_bound": {
+      "relevant_in_pool": 73,
+      "precision_at_10": 1.0,
+      "ndcg_at_10": 1.0,
+      "precision_at_25": 1.0,
+      "ndcg_at_25": 1.0,
+      "precision_at_50": 1.0,
+      "ndcg_at_50": 1.0,
+      "precision_at_100": 0.73,
+      "ndcg_at_100": 1.0
+    }
+  }
+}
