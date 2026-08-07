@@ -1,0 +1,21 @@
+query,group
+river,natural_feature
+school,public_building
+farmland,land_use
+hospital,public_building
+airport,transport
+bridge,transport
+railway,transport
+swimming pool,recreation
+golf course,recreation
+parking lot,transport
+industrial building,industrial
+cemetery,land_use
+basketball court,recreation
+playground,recreation
+stadium,recreation
+wind turbine,energy
+greenhouse,agriculture
+vineyard,agriculture
+orchard,agriculture
+dam,water_infrastructure
