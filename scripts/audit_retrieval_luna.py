@@ -64,6 +64,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--image-size", type=int, default=768)
     parser.add_argument("--judge-workers", type=int, default=1)
     parser.add_argument(
+        "--retrieve-only",
+        action="store_true",
+        help="Write ranked candidates without sending images to the visual judge.",
+    )
+    parser.add_argument(
         "--judge-batch-size",
         type=int,
         default=10,
@@ -232,9 +237,6 @@ def judge_query(
 
 def main() -> None:
     args = parse_args()
-    api_key = os.environ.get("LUNA_API_KEY")
-    if not api_key:
-        raise RuntimeError("set LUNA_API_KEY in the process environment")
     queries = load_queries(args)
     requested = set(args.systems)
     needs_gated = "gated_highres" in requested
@@ -376,6 +378,21 @@ def main() -> None:
                 )
     candidates = pd.DataFrame(candidate_rows)
     candidates.to_csv(output_dir / "candidates_pending_judgment.csv", index=False)
+    if args.retrieve_only:
+        print(
+            json.dumps(
+                {
+                    "retrieve_only": True,
+                    "candidate_count": len(candidates),
+                    "output": str(output_dir / "candidates_pending_judgment.csv"),
+                },
+                ensure_ascii=False,
+            )
+        )
+        return
+    api_key = os.environ.get("LUNA_API_KEY")
+    if not api_key:
+        raise RuntimeError("set LUNA_API_KEY in the process environment")
     judgments: list[dict] = []
     raw_responses = {}
     for system, query in candidates[["system", "query"]].drop_duplicates().itertuples(index=False):
