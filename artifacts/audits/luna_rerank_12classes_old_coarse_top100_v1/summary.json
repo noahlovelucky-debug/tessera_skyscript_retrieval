@@ -1,0 +1,102 @@
+{
+  "model": "gpt-5.6-luna",
+  "retrieval_checkpoints": {
+    "gated_highres": "/data/code/tessera_skyscript_retrieval/artifacts/runs/gated_coarse_v3/best.pt"
+  },
+  "candidate_split": "test",
+  "candidate_count": 39344,
+  "top_k": 100,
+  "systems": {
+    "gated_highres": {
+      "mean_luna_visual_precision_at_k": 0.88,
+      "mean_luna_visual_hit_at_k": 1.0,
+      "mean_luna_discounted_relevance_at_k": 0.8853966644802744,
+      "queries": {
+        "river": {
+          "luna_visual_precision_at_k": 0.69,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.7326225700838218,
+          "luna_relevant_count": 69,
+          "gate_global_weight": 0.5627003908157349
+        },
+        "school": {
+          "luna_visual_precision_at_k": 0.93,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9349168441702419,
+          "luna_relevant_count": 93,
+          "gate_global_weight": 0.5156893730163574
+        },
+        "farmland": {
+          "luna_visual_precision_at_k": 0.67,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.6509404687898972,
+          "luna_relevant_count": 67,
+          "gate_global_weight": 0.5699761509895325
+        },
+        "hospital": {
+          "luna_visual_precision_at_k": 0.71,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.7524944766814717,
+          "luna_relevant_count": 71,
+          "gate_global_weight": 0.5453442931175232
+        },
+        "airport": {
+          "luna_visual_precision_at_k": 0.96,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9223776755959552,
+          "luna_relevant_count": 96,
+          "gate_global_weight": 0.5600692629814148
+        },
+        "bridge": {
+          "luna_visual_precision_at_k": 0.79,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.813144981583611,
+          "luna_relevant_count": 79,
+          "gate_global_weight": 0.5895466804504395
+        },
+        "railway": {
+          "luna_visual_precision_at_k": 0.98,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9854335135314586,
+          "luna_relevant_count": 98,
+          "gate_global_weight": 0.5790672302246094
+        },
+        "swimming_pool": {
+          "luna_visual_precision_at_k": 0.94,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9430098180343716,
+          "luna_relevant_count": 94,
+          "gate_global_weight": 0.5033761262893677
+        },
+        "golf_course": {
+          "luna_visual_precision_at_k": 0.98,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9792463265857342,
+          "luna_relevant_count": 98,
+          "gate_global_weight": 0.5205835103988647
+        },
+        "parking_lot": {
+          "luna_visual_precision_at_k": 0.99,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9922843494502112,
+          "luna_relevant_count": 99,
+          "gate_global_weight": 0.5467692613601685
+        },
+        "industrial_building": {
+          "luna_visual_precision_at_k": 0.92,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 0.9182889492565198,
+          "luna_relevant_count": 92,
+          "gate_global_weight": 0.48569953441619873
+        },
+        "cemetery": {
+          "luna_visual_precision_at_k": 1.0,
+          "luna_visual_hit_at_k": 1.0,
+          "luna_discounted_relevance_at_k": 1.0,
+          "luna_relevant_count": 100,
+          "gate_global_weight": 0.5820730328559875
+        }
+      }
+    }
+  }
+}
